@@ -335,7 +335,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (route.id == 2l) {
 			if (directionId == 0) {
-				stationName = "Univ. Bishop's / Oxford";
+				stationName = "U. Bishop's / Oxford";
 			} else {
 				stationName = "Cégep";
 			}
@@ -385,7 +385,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (directionId == 0) {
 				stationName = "Plateau St-Joseph";
 			} else {
-				stationName = "Univ. Bishop's";
+				stationName = "U. Bishop's";
 			}
 		} else if (route.id == 12l) {
 			if (directionId == 0) {
@@ -481,7 +481,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (directionId == 0) {
 				stationName = "Alexander-Galt / Beattle / Atto";
 			} else {
-				stationName = "Univ. Bishop's";
+				stationName = "U. Bishop's";
 			}
 		} else if (route.id == 49l) {
 			if (directionId == 0) {
