@@ -544,10 +544,10 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern STATION_DU = Pattern.compile("(station du )", Pattern.CASE_INSENSITIVE);
 	private static final String STATION_DU_REPLACEMENT = "";
 
-	private static final Pattern UNIVERSITE_DE_SHERBROOKE = Pattern.compile("(université De Sherbrooke )", Pattern.CASE_INSENSITIVE);
-	private static final String UNIVERSITE_DE_SHERBROOKE_REPLACEMENT = "U. Sherbrooke ";
-	private static final Pattern UNIVERSITE_BISHOP = Pattern.compile("(université bishop's )", Pattern.CASE_INSENSITIVE);
-	private static final String UNIVERSITE_BISHOP_REPLACEMENT = "U. Bishop's ";
+	private static final Pattern UNIVERSITE_DE_SHERBROOKE = Pattern.compile("(université de sherbrooke)", Pattern.CASE_INSENSITIVE);
+	private static final String UNIVERSITE_DE_SHERBROOKE_REPLACEMENT = "U. Sherbrooke";
+	private static final Pattern UNIVERSITE_BISHOP = Pattern.compile("(université bishop's)", Pattern.CASE_INSENSITIVE);
+	private static final String UNIVERSITE_BISHOP_REPLACEMENT = "U. Bishop's";
 
 	@Override
 	public String cleanTripHeadsign(String tripHeadsign) {
