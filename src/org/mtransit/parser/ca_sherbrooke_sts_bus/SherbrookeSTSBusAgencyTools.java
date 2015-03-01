@@ -226,7 +226,8 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		}
 		routeLongName = MSpec.SAINT.matcher(routeLongName).replaceAll(MSpec.SAINT_REPLACEMENT);
 		routeLongName = STATION_DU.matcher(routeLongName).replaceAll(STATION_DU_REPLACEMENT);
-		routeLongName = UNIVERSITE.matcher(routeLongName).replaceAll(UNIVERSITE_REPLACEMENT);
+		routeLongName = UNIVERSITE_DE_SHERBROOKE.matcher(routeLongName).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
+		routeLongName = UNIVERSITE_BISHOP.matcher(routeLongName).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
 		return MSpec.cleanLabel(routeLongName);
 	}
 
@@ -543,13 +544,16 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern STATION_DU = Pattern.compile("(station du )", Pattern.CASE_INSENSITIVE);
 	private static final String STATION_DU_REPLACEMENT = "";
 
-	private static final Pattern UNIVERSITE = Pattern.compile("(Université )", Pattern.CASE_INSENSITIVE);
-	private static final String UNIVERSITE_REPLACEMENT = "U. ";
+	private static final Pattern UNIVERSITE_DE_SHERBROOKE = Pattern.compile("(université De Sherbrooke )", Pattern.CASE_INSENSITIVE);
+	private static final String UNIVERSITE_DE_SHERBROOKE_REPLACEMENT = "U. Sherbrooke ";
+	private static final Pattern UNIVERSITE_BISHOP = Pattern.compile("(université bishop's )", Pattern.CASE_INSENSITIVE);
+	private static final String UNIVERSITE_BISHOP_REPLACEMENT = "U. Bishop's ";
 
 	@Override
 	public String cleanTripHeadsign(String tripHeadsign) {
 		tripHeadsign = STATION_DU.matcher(tripHeadsign).replaceAll(STATION_DU_REPLACEMENT);
-		tripHeadsign = UNIVERSITE.matcher(tripHeadsign).replaceAll(UNIVERSITE_REPLACEMENT);
+		tripHeadsign = UNIVERSITE_DE_SHERBROOKE.matcher(tripHeadsign).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
+		tripHeadsign = UNIVERSITE_BISHOP.matcher(tripHeadsign).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
 		tripHeadsign = AVENUE.matcher(tripHeadsign).replaceAll(AVENUE_REPLACEMENT);
 		return MSpec.cleanLabelFR(tripHeadsign);
 	}
@@ -559,6 +563,10 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String cleanStopName(String gStopName) {
+		gStopName = STATION_DU.matcher(gStopName).replaceAll(STATION_DU_REPLACEMENT);
+		gStopName = UNIVERSITE_DE_SHERBROOKE.matcher(gStopName).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
+		gStopName = UNIVERSITE_BISHOP.matcher(gStopName).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
+		gStopName = AVENUE.matcher(gStopName).replaceAll(AVENUE_REPLACEMENT);
 		return super.cleanStopNameFR(gStopName);
 	}
 
