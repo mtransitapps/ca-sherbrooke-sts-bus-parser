@@ -117,7 +117,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					routeLongName = "Carrefour De L'Estrie <-> Bowen - Talbot";
 					break;
 				case 2:
-					routeLongName = "Station Du Cégep <-> Université Bishop's / Oxford";
+					routeLongName = "Cégep <-> U. Bishop's / Oxford";
 					break;
 				case 3:
 					routeLongName = "Carrefour De L'Estrie <-> 13° Av. - du 24-Juin";
@@ -126,49 +126,49 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					routeLongName = "Carrefour De L'Estrie <-> Chalumeau";
 					break;
 				case 5:
-					routeLongName = "Station Du Cégep <-> 13° Av. - du 24-Juin";
+					routeLongName = "Cégep <-> 13° Av. - du 24-Juin";
 					break;
 				case 6:
-					routeLongName = "Université De Sherbrooke <-> De Lisieux - Lachine";
+					routeLongName = "U. Sherbrooke <-> De Lisieux - Lachine";
 					break;
 				case 7:
 					routeLongName = "André / Hallée <-> CHUS - Fleurimont";
 					break;
 				case 8:
-					routeLongName = "Université De Sherbrooke <-> CHUS - Fleurimont";
+					routeLongName = "U. Sherbrooke <-> CHUS - Fleurimont";
 					break;
 				case 9:
-					routeLongName = "Université De Sherbrooke <-> Chardonnerets";
+					routeLongName = "U. Sherbrooke <-> Chardonnerets";
 					break;
 				case 11:
-					routeLongName = "Université Bishop's <-> Plateau St-Joseph";
+					routeLongName = "U. Bishop's <-> Plateau St-Joseph";
 					break;
 				case 12:
-					routeLongName = "Carrefour De L'Estrie <-> Station Du Cégep";
+					routeLongName = "Carrefour De L'Estrie <-> Cégep";
 					break;
 				case 13:
-					routeLongName = "Université De Sherbrooke <-> Raby - Normand";
+					routeLongName = "U. Sherbrooke <-> Raby - Normand";
 					break;
 				case 14:
-					routeLongName = "Université De Sherbrooke <-> Station Du Cégep";
+					routeLongName = "U. Sherbrooke <-> Cégep";
 					break;
 				case 15:
-					routeLongName = "Université De Sherbrooke <-> Parc Blanchard";
+					routeLongName = "U. Sherbrooke <-> Parc Blanchard";
 					break;
 				case 16:
-					routeLongName = "Université De Sherbrooke <-> Ontario - Prospect";
+					routeLongName = "U. Sherbrooke <-> Ontario - Prospect";
 					break;
 				case 17:
-					routeLongName = "Station Du Cégep <-> Place Dussault";
+					routeLongName = "Cégep <-> Place Dussault";
 					break;
 				case 18:
-					routeLongName = "Université De Sherbrooke <-> Bourassa - Frontière";
+					routeLongName = "U. Sherbrooke <-> Bourassa - Frontière";
 					break;
 				case 19:
-					routeLongName = "Station Du Cégep <-> De Lisieux - Brûlé";
+					routeLongName = "Cégep <-> De Lisieux - Brûlé";
 					break;
 				case 20:
-					routeLongName = "Station Du Cégep <-> St-François - Boulogne (Taxi-Bus)";
+					routeLongName = "Cégep <-> St-François - Boulogne (Taxi-Bus)";
 					break;
 				case 21:
 					routeLongName = "Place Fleurimont <-> CHUS - Fleurimont (Taxi-Bus)";
@@ -177,7 +177,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					routeLongName = "Place Fleurimont / Galvin <-> CHUS - Fleurimont";
 					break;
 				case 24:
-					routeLongName = "Université De Sherbrooke <-> Lotbinière - North Hatkey";
+					routeLongName = "U. Sherbrooke <-> Lotbinière - North Hatkey";
 					break;
 				case 25:
 					routeLongName = "13° Av. - du 24-Juin <-> Gîte Du Bel Âge / Champêtre / Coquelicots (Taxi-Bus)";
@@ -186,13 +186,13 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					routeLongName = "Carrefour De L'Estrie <-> Parc Industriel (Taxi-Bus)";
 					break;
 				case 27:
-					routeLongName = "Université De Sherbrooke <-> Val-Du-Lac";
+					routeLongName = "U. Sherbrooke <-> Val-Du-Lac";
 					break;
 				case 28:
-					routeLongName = "Université Bishop's <-> Alexander-Galt / Beattie / Atto";
+					routeLongName = "U. Bishop's <-> Alexander-Galt / Beattie / Atto";
 					break;
 				case 29:
-					routeLongName = "Station Du Dépôt <-> Université De Sherbrooke";
+					routeLongName = "Dépôt <-> U. Sherbrooke";
 					break;
 				case 49:
 					routeLongName = "Northrop-Frye <-> CHUS - Hôtel-Dieu";
@@ -201,13 +201,13 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					routeLongName = "Carrefour De L'Estrie <-> Val-Des-Arbres / Laliberté";
 					break;
 				case 51:
-					routeLongName = "Station Du Cégep <-> Kruger";
+					routeLongName = "Cégep <-> Kruger";
 					break;
 				case 52:
 					routeLongName = "Terrasses Rock Forest <-> Av. Du Parc";
 					break;
 				case 53:
-					routeLongName = "Université De Sherbrooke <-> Campus De La Santé";
+					routeLongName = "U. Sherbrooke <-> Campus De La Santé";
 					break;
 				case 54:
 					routeLongName = "Northrop-Frye <-> CHUS - Fleurimont";
@@ -216,7 +216,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					routeLongName = "Du Manoir <-> 13° Av. - Du 24-Juin";
 					break;
 				case 56:
-					routeLongName = "Université Bishop's <-> Oxford - Provigo Lennoxville (Taxi-Bus)";
+					routeLongName = "U. Bishop's <-> Oxford - Provigo Lennoxville (Taxi-Bus)";
 					break;
 				case 57:
 					routeLongName = "Carrefour De L'Estrie <-> 13° Av. - Du 24-Juin";
