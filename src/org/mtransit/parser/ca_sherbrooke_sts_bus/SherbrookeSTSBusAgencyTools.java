@@ -322,7 +322,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public void setTripHeadsign(MRoute route, MTrip mTrip, GTrip gTrip) {
 		String stationName = cleanTripHeadsign(gTrip.trip_headsign);
-		int directionId = Integer.valueOf(gTrip.direction_id);
+		int directionId = gTrip.direction_id;
 		if (route.id == 1l) {
 			if (directionId == 0) {
 				stationName = "Bowen - Talbot";
