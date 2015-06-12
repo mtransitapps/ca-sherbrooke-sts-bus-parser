@@ -20,6 +20,7 @@ import org.mtransit.parser.mt.data.MTrip;
 
 // http://donnees.ville.sherbrooke.qc.ca/dataset/transpo
 // http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-02-03T20:44:37.634Z/gtfs-stsherbrooke-hiver2015.zip
+// http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-06-08T14:16:04.768Z/gtfs-ete-2015-stsherbrooke-20150602.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -77,77 +78,142 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String GRID_EXPR = "EXPR";
 	private static final long RID_EXPR = 9999l;
 
+	private static final String S = "S";
+	private static final String X = "X";
+
 	@Override
 	public long getRouteId(GRoute gRoute) {
-		if (StringUtils.isNumeric(gRoute.route_id)) {
-			return Long.valueOf(gRoute.route_id);
-		} else if (GRID_EXPR.equals(gRoute.route_id)) {
+		if (StringUtils.isNumeric(gRoute.route_short_name)) {
+			return Long.valueOf(gRoute.route_short_name);
+		}
+		if (GRID_EXPR.equals(gRoute.route_short_name)) {
 			return RID_EXPR;
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.route_id);
+		Matcher matcher = DIGITS.matcher(gRoute.route_short_name);
 		matcher.find();
-		return Integer.parseInt(matcher.group());
+		long digits = Long.parseLong(matcher.group());
+		if (gRoute.route_short_name.endsWith(S)) {
+			digits += 19000l;
+		} else if (gRoute.route_short_name.endsWith(X)) {
+			digits += 24000l;
+		} else {
+			System.out.println("Unexpected route ID " + gRoute);
+			System.exit(-1);
+		}
+		return digits;
 	}
 
 	private static final String RTS_EXPRESS = "E";
-	private static final String RTS_EXPRESS_START_WITH = "E";
 
 	@Override
 	public String getRouteShortName(GRoute gRoute) {
-		if (gRoute.route_short_name.startsWith(RTS_EXPRESS_START_WITH)) {
+		if (GRID_EXPR.equals(gRoute.route_short_name)) {
 			return RTS_EXPRESS;
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.route_id);
-		matcher.find();
-		return matcher.group();
+		return super.getRouteShortName(gRoute);
 	}
 
-	private static final String IGA_EXTRA_KING_OUEST_NORTHROP_FRYE = "IGA Extra - King Ouest <-> Northrop-Frye";
-	private static final String CARREFOUR_DE_L_ESTRIE_BOWEN_TALBOT = "Carrefour De L'Estrie <-> Bowen - Talbot";
-	private static final String CÉGEP_U_BISHOP_S_OXFORD = "Cégep <-> U. Bishop's / Oxford";
-	private static final String CARREFOUR_DE_L_ESTRIE_13_AV_DU_24_JUIN2 = "Carrefour De L'Estrie <-> 13° Av. - 24-Juin";
-	private static final String CARREFOUR_DE_L_ESTRIE_CHALUMEAU = "Carrefour De L'Estrie <-> Chalumeau";
-	private static final String CÉGEP_13_AV_DU_24_JUIN = "Cégep <-> 13° Av. - 24-Juin";
-	private static final String U_SHERBROOKE_DE_LISIEUX_LACHINE = "U. Sherbrooke <-> De Lisieux - Lachine";
-	private static final String ANDRÉ_HALLÉE_CHUS_FLEURIMONT = "André / Hallée <-> CHUS - Fleurimont";
-	private static final String U_SHERBROOKE_CHUS_FLEURIMONT = "U. Sherbrooke <-> CHUS - Fleurimont";
-	private static final String U_SHERBROOKE_CHARDONNERETS = "U. Sherbrooke <-> Chardonnerets";
-	private static final String U_BISHOP_S_PLATEAU_ST_JOSEPH = "U. Bishop's <-> Plateau St-Joseph";
-	private static final String CARREFOUR_DE_L_ESTRIE_CÉGEP = "Carrefour De L'Estrie <-> Cégep";
-	private static final String U_SHERBROOKE_RABY_NORMAND = "U. Sherbrooke <-> Raby - Normand";
-	private static final String U_SHERBROOKE_CÉGEP = "U. Sherbrooke <-> Cégep";
-	private static final String U_SHERBROOKE_PARC_BLANCHARD = "U. Sherbrooke <-> Parc Blanchard";
-	private static final String U_SHERBROOKE_ONTARIO_PROSPECT = "U. Sherbrooke <-> Ontario - Prospect";
-	private static final String CÉGEP_PLACE_DUSSAULT = "Cégep <-> Place Dussault";
-	private static final String U_SHERBROOKE_BOURASSA_FRONTIÈRE = "U. Sherbrooke <-> Bourassa - Frontière";
-	private static final String CÉGEP_DE_LISIEUX_BRÛLÉ = "Cégep <-> De Lisieux - Brûlé";
-	private static final String CÉGEP_ST_FRANÇOIS_BOULOGNE_TAXI_BUS = "Cégep <-> St-François - Boulogne (Taxi-Bus)";
-	private static final String PLACE_FLEURIMONT_CHUS_FLEURIMONT_TAXI_BUS = "Place Fleurimont <-> CHUS - Fleurimont (Taxi-Bus)";
-	private static final String PLACE_FLEURIMONT_GALVIN_CHUS_FLEURIMONT = "Place Fleurimont / Galvin <-> CHUS - Fleurimont";
-	private static final String U_SHERBROOKE_LOTBINIÈRE_NORTH_HATKEY = "U. Sherbrooke <-> Lotbinière - North Hatkey";
-	private static final String _13_AV_DU_24_JUIN_GÎTE_DU_BEL_ÂGE_CHAMPÊTRE_COQUELICOTS_TAXI_BUS = "13° Av. - 24-Juin <-> Gîte Du Bel Âge / Champêtre / Coquelicots (Taxi-Bus)";
-	private static final String CARREFOUR_DE_L_ESTRIE_PARC_INDUSTRIEL_TAXI_BUS = "Carrefour De L'Estrie <-> Parc Industriel (Taxi-Bus)";
-	private static final String U_SHERBROOKE_VAL_DU_LAC = "U. Sherbrooke <-> Val-Du-Lac";
-	private static final String U_BISHOP_S_ALEXANDER_GALT_BEATTIE_ATTO = "U. Bishop's <-> Alexander-Galt / Beattie / Atto";
-	private static final String DÉPÔT_U_SHERBROOKE = "Dépôt <-> U. Sherbrooke";
-	private static final String NORTHROP_FRYE_CHUS_HÔTEL_DIEU = "Northrop-Frye <-> CHUS - Hôtel-Dieu";
-	private static final String CARREFOUR_DE_L_ESTRIE_VAL_DES_ARBRES_LALIBERTÉ = "Carrefour De L'Estrie <-> Val-Des-Arbres / Laliberté";
-	private static final String CÉGEP_KRUGER = "Cégep <-> Kruger";
-	private static final String TERRASSES_ROCK_FOREST_AV_DU_PARC = "Terrasses Rock Forest <-> Av. Du Parc";
-	private static final String U_SHERBROOKE_CAMPUS_DE_LA_SANTÉ = "U. Sherbrooke <-> Campus De La Santé";
-	private static final String NORTHROP_FRYE_CHUS_FLEURIMONT = "Northrop-Frye <-> CHUS - Fleurimont";
-	private static final String DU_MANOIR_13_AV_DU_24_JUIN = "Du Manoir <-> 13° Av. - 24-Juin";
-	private static final String U_BISHOP_S_OXFORD_PROVIGO_LENNOXVILLE_TAXI_BUS = "U. Bishop's <-> Oxford - Provigo Lennoxville (Taxi-Bus)";
-	private static final String CARREFOUR_DE_L_ESTRIE_13_AV_DU_24_JUIN = "Carrefour De L'Estrie <-> 13° Av. - 24-Juin";
+	private static final String RLN_SPLIT = "-";
+
+	// http://www.toponymie.gouv.qc.ca/ct/normes-procedures/terminologie-geographique/liste-termes-geographiques.html
+	private static final String AVE = "Av.";
+	private static final String CARREFOUR = "Carref.";
+	private static final String PARC = "Parc";
+	private static final String PLACE = "Place";
+	private static final String PLATEAU = "Pl.";
+	private static final String PARC_INDUSTRIEL = PARC + " Ind.";
+	private static final String TERRASSES = "Tsses";
+
+	private static final String U_DE_S = "UdeS";
+	private static final String U_BISHOP_S = "U Bishop's";
+	private static final String CARREFOUR_DE_L_ESTRIE = CARREFOUR + " De L'Estrie";
+	private static final String _13_AVE_24_JUIN = "13° " + AVE + " / 24-Juin";
+	private static final String NORTHROP_FRYE = "Northrop-Frye";
+	private static final String IGA_EXTRA_KING_OUEST = "IGA Extra / King Ouest";
+	private static final String BOWEN_TALBOT = "Bowen / Talbot";
+	private static final String CHALUMEAU = "Chalumeau";
+	private static final String OXFORD = "Oxford";
+	private static final String U_BISHOP_S_OXFORD = U_BISHOP_S + " / " + OXFORD;
+	private static final String FLEURIMONT = "Fleurimont";
+	private static final String CHUS = "CHUS";
+	private static final String CHUS_FLEURIMONT = CHUS + " " + FLEURIMONT;
+	private static final String CHUS_HÔTEL_DIEU = CHUS + " Hôtel-Dieu";
+	private static final String PLACE_FLEURIMONT = PLACE + " " + FLEURIMONT;
+	private static final String LISIEUX = "Lisieux";
+	private static final String LISIEUX_BRÛLÉ = LISIEUX + " / Brûlé";
+	private static final String LISIEUX_LACHINE = LISIEUX + " / Lachine";
+	private static final String ANDRÉ_HALLÉE = "André / Hallée";
+	private static final String CHARDONNERETS = "Chardonnerets";
+	private static final String PLATEAU_ST_JOSEPH = PLATEAU + " St-Joseph";
+	private static final String CÉGEP = "Cégep";
+	private static final String RABY_NORMAND = "Raby / Normand";
+	private static final String PARC_BLANCHARD = PARC + " Blanchard";
+	private static final String ONTARIO_PROSPECT = "Ontario / Prospect";
+	private static final String PLACE_DUSSAULT = PLACE + " Dussault";
+	private static final String BOURASSA_FRONTIÈRE = "Bourassa / Frontière";
+	private static final String TAXI_BUS = "(Taxi-Bus)";
+	private static final String ST_FRANÇOIS_BOULOGNE = "St-François / Boulogne";
+	private static final String GALVIN = "Galvin";
+	private static final String LOTBINIÈRE_NORTH_HATLEY = "Lotbinière / North Hatley";
+	private static final String KRUGER = "Kruger";
+	private static final String GITE_DU_BEL_ÂGE_CHAMPÊTRE_COQUELICOTS = "Gite Du Bel Âge / Champêtre / Coquelicots";
+	private static final String VAL_DU_LAC = "Val-Du-Lac";
+	private static final String ALEXANDER_GALT_BEATTLE_ATTO = "Alexander-Galt / Beattle / Atto";
+	private static final String VAL_DES_ARBRES_LALIBERTÉ = "Val-Des-Arbres / Laliberté";
+	private static final String DU_MANOIR = "Du Manoir";
+	private static final String TERRASSES_ROCK_FOREST = TERRASSES + " Rock-Forest";
+	private static final String AVE_DU_PARC = AVE + " Du " + PARC;
+	private static final String CHUS_CHUSFL_PORTE_35 = CHUS + " / " + CHUS_FLEURIMONT + " (P. 35)";
+	private static final String CAMPUS = "Campus";
+	private static final String IGA_EXTRA_KING_OUEST_NORTHROP_FRYE = IGA_EXTRA_KING_OUEST + " " + RLN_SPLIT + " " + NORTHROP_FRYE;
+	private static final String CARREFOUR_DE_L_ESTRIE_BOWEN_TALBOT = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + BOWEN_TALBOT;
+	private static final String CÉGEP_U_BISHOP_S_OXFORD = CÉGEP + " " + RLN_SPLIT + " " + U_BISHOP_S_OXFORD;
+	private static final String CARREFOUR_DE_L_ESTRIE_13_AV_DU_24_JUIN2 = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + _13_AVE_24_JUIN;
+	private static final String CARREFOUR_DE_L_ESTRIE_CHALUMEAU = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + CHALUMEAU;
+	private static final String CÉGEP_13_AV_DU_24_JUIN = CÉGEP + " " + RLN_SPLIT + " " + _13_AVE_24_JUIN;
+	private static final String U_SHERBROOKE_DE_LISIEUX_LACHINE = U_DE_S + " " + RLN_SPLIT + " " + LISIEUX_LACHINE;
+	private static final String ANDRÉ_HALLÉE_CHUS_FLEURIMONT = ANDRÉ_HALLÉE + " " + RLN_SPLIT + " " + CHUS_FLEURIMONT;
+	private static final String U_SHERBROOKE_CHUS_FLEURIMONT = U_DE_S + " " + RLN_SPLIT + " " + CHUS_FLEURIMONT;
+	private static final String U_SHERBROOKE_CHARDONNERETS = U_DE_S + " " + RLN_SPLIT + " " + CHARDONNERETS;
+	private static final String U_BISHOP_S_PLATEAU_ST_JOSEPH = U_BISHOP_S + " " + RLN_SPLIT + " " + PLATEAU_ST_JOSEPH;
+	private static final String CARREFOUR_DE_L_ESTRIE_CÉGEP = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + CÉGEP;
+	private static final String U_SHERBROOKE_RABY_NORMAND = U_DE_S + " " + RLN_SPLIT + " " + RABY_NORMAND;
+	private static final String U_SHERBROOKE_CÉGEP = U_DE_S + " " + RLN_SPLIT + " " + CÉGEP;
+	private static final String U_SHERBROOKE_PARC_BLANCHARD = U_DE_S + " " + RLN_SPLIT + " " + PARC_BLANCHARD;
+	private static final String U_SHERBROOKE_ONTARIO_PROSPECT = U_DE_S + " " + RLN_SPLIT + " " + ONTARIO_PROSPECT;
+	private static final String CÉGEP_PLACE_DUSSAULT = CÉGEP + " " + RLN_SPLIT + " " + PLACE_DUSSAULT;
+	private static final String U_SHERBROOKE_BOURASSA_FRONTIÈRE = U_DE_S + " " + RLN_SPLIT + " " + BOURASSA_FRONTIÈRE;
+	private static final String CÉGEP_DE_LISIEUX_BRÛLÉ = CÉGEP + " " + RLN_SPLIT + LISIEUX_BRÛLÉ;
+	private static final String CÉGEP_ST_FRANÇOIS_BOULOGNE_TAXI_BUS = CÉGEP + " " + RLN_SPLIT + " " + ST_FRANÇOIS_BOULOGNE + " " + TAXI_BUS;
+	private static final String PLACE_FLEURIMONT_CHUS_FLEURIMONT_TAXI_BUS = PLACE_FLEURIMONT + " " + RLN_SPLIT + " " + CHUS_FLEURIMONT + " " + TAXI_BUS;
+	private static final String PLACE_FLEURIMONT_GALVIN_CHUS_FLEURIMONT = PLACE_FLEURIMONT + " / " + GALVIN + " " + RLN_SPLIT + " " + CHUS_FLEURIMONT;
+	private static final String U_SHERBROOKE_LOTBINIÈRE_NORTH_HATKEY = U_DE_S + " " + RLN_SPLIT + " " + LOTBINIÈRE_NORTH_HATLEY;
+	private static final String _13_AV_DU_24_JUIN_GÎTE_DU_BEL_ÂGE_CHAMPÊTRE_COQUELICOTS_TAXI_BUS = _13_AVE_24_JUIN + " " + RLN_SPLIT + " "
+			+ GITE_DU_BEL_ÂGE_CHAMPÊTRE_COQUELICOTS + " " + TAXI_BUS;
+	private static final String CARREFOUR_DE_L_ESTRIE_PARC_INDUSTRIEL_TAXI_BUS = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + PARC_INDUSTRIEL + " "
+			+ TAXI_BUS;
+	private static final String U_SHERBROOKE_VAL_DU_LAC = U_DE_S + " " + RLN_SPLIT + " " + VAL_DU_LAC;
+	private static final String U_BISHOP_S_ALEXANDER_GALT_BEATTIE_ATTO = U_BISHOP_S + " " + RLN_SPLIT + " " + ALEXANDER_GALT_BEATTLE_ATTO;
+	private static final String DÉPÔT_U_SHERBROOKE = "Dépôt " + RLN_SPLIT + " " + U_DE_S;
+	private static final String NORTHROP_FRYE_CHUS_HÔTEL_DIEU = NORTHROP_FRYE + " " + RLN_SPLIT + " " + CHUS_HÔTEL_DIEU;
+	private static final String CARREFOUR_DE_L_ESTRIE_VAL_DES_ARBRES_LALIBERTÉ = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + VAL_DES_ARBRES_LALIBERTÉ;
+	private static final String CÉGEP_KRUGER = CÉGEP + " " + RLN_SPLIT + " " + KRUGER;
+	private static final String TERRASSES_ROCK_FOREST_AV_DU_PARC = TERRASSES_ROCK_FOREST + " " + RLN_SPLIT + " " + AVE_DU_PARC;
+	private static final String U_SHERBROOKE_CAMPUS_DE_LA_SANTÉ = U_DE_S + " " + RLN_SPLIT + " " + CAMPUS + " De La Santé";
+	private static final String NORTHROP_FRYE_CHUS_FLEURIMONT = NORTHROP_FRYE + " " + RLN_SPLIT + " " + CHUS_FLEURIMONT;
+	private static final String DU_MANOIR_13_AV_DU_24_JUIN = DU_MANOIR + " " + RLN_SPLIT + " " + _13_AVE_24_JUIN;
+	private static final String U_BISHOP_S_OXFORD_PROVIGO_LENNOXVILLE_TAXI_BUS = U_BISHOP_S + " " + RLN_SPLIT + " " + OXFORD + " / Provigo Lennoxville "
+			+ TAXI_BUS;
+	private static final String CARREFOUR_DE_L_ESTRIE_13_AV_DU_24_JUIN = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + _13_AVE_24_JUIN;
 
 	@Override
 	public String getRouteLongName(GRoute gRoute) {
 		String routeLongName = gRoute.route_long_name;
 		if (StringUtils.isEmpty(routeLongName)) {
-			if (GRID_EXPR.equals(gRoute.route_id)) {
+			if (GRID_EXPR.equals(gRoute.route_short_name)) {
 				routeLongName = IGA_EXTRA_KING_OUEST_NORTHROP_FRYE;
 			} else {
-				Matcher matcher = DIGITS.matcher(gRoute.route_id);
+				Matcher matcher = DIGITS.matcher(gRoute.route_short_name);
 				matcher.find();
 				int digits = Integer.parseInt(matcher.group());
 				switch (digits) {
@@ -192,10 +258,16 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 				}
 			}
 		}
+		if (StringUtils.isEmpty(routeLongName)) {
+			System.out.println("Unexpected route long name for " + gRoute);
+			System.exit(-1);
+			return null;
+		}
 		routeLongName = MSpec.SAINT.matcher(routeLongName).replaceAll(MSpec.SAINT_REPLACEMENT);
 		routeLongName = STATION_DU.matcher(routeLongName).replaceAll(STATION_DU_REPLACEMENT);
 		routeLongName = UNIVERSITE_DE_SHERBROOKE.matcher(routeLongName).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		routeLongName = UNIVERSITE_BISHOP.matcher(routeLongName).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
+		routeLongName = MSpec.cleanStreetTypesFRCA(routeLongName);
 		return MSpec.cleanLabel(routeLongName);
 	}
 
@@ -231,94 +303,64 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String getRouteColor(GRoute gRoute) {
-		if (GRID_EXPR.equals(gRoute.route_id)) {
+		if (GRID_EXPR.equals(gRoute.route_short_name)) {
 			return COLOR_231F20;
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.route_id);
-		matcher.find();
-		int digits = Integer.parseInt(matcher.group());
-		switch (digits) {
-		// @formatter:off
-		case 1: return COLOR_B3D234;
-		case 2: return COLOR_9E015E;
-		case 3: return COLOR_0089CF;
-		case 4: return COLOR_A8A9AD;
-		case 5: return COLOR_FDBC12;
-		case 6: return COLOR_F289B7;
-		case 7: return COLOR_EE1D23;
-		case 8: return COLOR_3AB54A;
-		case 9: return COLOR_A25B09;
-		case 11: return COLOR_EBDB01;
-		case 12: return COLOR_007E3D;
-		case 13: return COLOR_00B1B0;
-		case 14: return COLOR_BC1B8D;
-		case 15: return COLOR_F7931D;
-		case 16: return COLOR_6C6D70;
-		case 17: return COLOR_09428E;
-		case 18: return COLOR_ED028C;
-		case 19: return COLOR_56CBF5;
-		case 20: return COLOR_6C6D70;
-		case 21: return COLOR_09428E;
-		case 22: return COLOR_FDBC12;
-		case 24: return COLOR_EE1D23;
-		case 25: return COLOR_ED028C;
-		case 26: return COLOR_9E015E;
-		case 27: return COLOR_B3D234;
-		case 28: return COLOR_F289B7;
-		case 29: return COLOR_0089CF;
-		case 49: return COLOR_7671B4;
-		case 50: return COLOR_F7931D;
-		case 51: return COLOR_3AB54A;
-		case 52: return COLOR_00AEEF;
-		case 53: return COLOR_A8A9AD;
-		case 54: return COLOR_A25B09;
-		case 55: return COLOR_007E3D;
-		case 56: return COLOR_692C91;
-		case 57: return COLOR_56CBF5;
-		// @formatter:on
-		default:
+		try {
+			Matcher matcher = DIGITS.matcher(gRoute.route_short_name);
+			matcher.find();
+			int digits = Integer.parseInt(matcher.group());
+			switch (digits) {
+			// @formatter:off
+			case 1: return COLOR_B3D234;
+			case 2: return COLOR_9E015E;
+			case 3: return COLOR_0089CF;
+			case 4: return COLOR_A8A9AD;
+			case 5: return COLOR_FDBC12;
+			case 6: return COLOR_F289B7;
+			case 7: return COLOR_EE1D23;
+			case 8: return COLOR_3AB54A;
+			case 9: return COLOR_A25B09;
+			case 11: return COLOR_EBDB01;
+			case 12: return COLOR_007E3D;
+			case 13: return COLOR_00B1B0;
+			case 14: return COLOR_BC1B8D;
+			case 15: return COLOR_F7931D;
+			case 16: return COLOR_6C6D70;
+			case 17: return COLOR_09428E;
+			case 18: return COLOR_ED028C;
+			case 19: return COLOR_56CBF5;
+			case 20: return COLOR_6C6D70;
+			case 21: return COLOR_09428E;
+			case 22: return COLOR_FDBC12;
+			case 24: return COLOR_EE1D23;
+			case 25: return COLOR_ED028C;
+			case 26: return COLOR_9E015E;
+			case 27: return COLOR_B3D234;
+			case 28: return COLOR_F289B7;
+			case 29: return COLOR_0089CF;
+			case 49: return COLOR_7671B4;
+			case 50: return COLOR_F7931D;
+			case 51: return COLOR_3AB54A;
+			case 52: return COLOR_00AEEF;
+			case 53: return COLOR_A8A9AD;
+			case 54: return COLOR_A25B09;
+			case 55: return COLOR_007E3D;
+			case 56: return COLOR_692C91;
+			case 57: return COLOR_56CBF5;
+			// @formatter:on
+			default:
+				System.out.println("Unexpected route color " + gRoute);
+				System.exit(-1);
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Unexpected route color " + gRoute);
 			System.exit(-1);
 			return null;
 		}
 	}
-
-	private static final String BOWEN_TALBOT = "Bowen - Talbot";
-	private static final String U_BISHOP_S_OXFORD = "U. Bishop's / Oxford";
-	private static final String LISIEUX_LACHINE = "Lisieux / Lachine";
-	private static final String CHARDONNERETS = "Chardonnerets";
-	private static final String PARC_BLANCHARD = "Parc Blanchard";
-	private static final String RABY_NORMAND = "Raby / Normand";
-	private static final String ONTARIO_PROSPECT = "Ontario / Prospect";
-	private static final String PLACE_DUSSAULT = "Place Dussault";
-	private static final String BOURASSA_FRONTIÈRE = "Bourassa / Frontière";
-	private static final String LISIEUX_BRÛLÉ = "Lisieux / Brûlé";
-	private static final String ST_FRANÇOIS_BOULOGNE = "St-François / Boulogne";
-	private static final String CHUS = "CHUS";
-	private static final String PLACE_FLEURIMONT = "Place Fleurimont";
-	private static final String LOTBINIÈRE_NORTH_HATLEY = "Lotbinière / North Hatley";
-	private static final String GITE_DU_BEL_ÂGE_CHAMPÊTRE_COQUELICOTS = "Gite Du Bel Âge / Champêtre / Coquelicots";
-	private static final String PARC_INDUSTRIEL = "Parc Industriel";
-	private static final String CARREFOUR_DE_L_ESTRIE2 = "Carrefour De L''Estrie";
-	private static final String VAL_DU_LAC = "Val-Du-Lac";
-	private static final String ALEXANDER_GALT_BEATTLE_ATTO = "Alexander-Galt / Beattle / Atto";
-	private static final String U_BISHOP_S = "U. Bishop's";
-	private static final String CHUS_HÔTEL_DIEU = "CHUS Hôtel-Dieu";
-	private static final String VAL_DES_ARBRES_LALIBERTÉ = "Val-Des-Arbres / Laliberté";
-	private static final String KRUGER = "Kruger";
-	private static final String CÉGEP = "Cégep";
-	private static final String TERRASSES_ROCK_FOREST = "Terrasses Rock-Forest";
-	private static final String AVE_DU_PARC = "Av. Du Parc";
-	private static final String CHUS_CHUSFL_PORTE_35 = "CHUS / CHUSFL (Porte 35)";
-	private static final String CAMPUS = "Campus";
-	private static final String CHUS_FLEURIMONT = "CHUS / Fleurimont";
-	private static final String DU_MANOIR = "Du Manoir";
-	private static final String _13_AVE_24_JUIN = "13° Av. / 24-Juin";
-	private static final String CARREFOUR_DE_L_ESTRIE = "Carrefour De L'Estrie";
-	private static final String NORTHROP_FRYE = "Northrop-Frye";
-	private static final String IGA_EXTRA_KING_OUEST = "IGA Extra / King Ouest";
-	private static final String PLATEAU_ST_JOSEPH = "Plateau St-Joseph";
-	private static final String ANDRÉ_HALLÉE = "André - Hallée";
 
 	@Override
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
@@ -343,7 +385,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mRoute.id == 4l) {
 			if (gTrip.direction_id == 0) {
-				stationName = "Chalumeau";
+				stationName = CHALUMEAU;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
@@ -465,7 +507,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (gTrip.direction_id == 0) {
 				stationName = PARC_INDUSTRIEL;
 			} else {
-				stationName = CARREFOUR_DE_L_ESTRIE2;
+				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
 		} else if (mRoute.id == 27l) {
 			if (gTrip.direction_id == 0) {
@@ -541,7 +583,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String STATION_DU_REPLACEMENT = "";
 
 	private static final Pattern UNIVERSITE_DE_SHERBROOKE = Pattern.compile("(université de sherbrooke)", Pattern.CASE_INSENSITIVE);
-	private static final String UNIVERSITE_DE_SHERBROOKE_REPLACEMENT = "U. Sherbrooke";
+	private static final String UNIVERSITE_DE_SHERBROOKE_REPLACEMENT = U_DE_S;
 	private static final Pattern UNIVERSITE_BISHOP = Pattern.compile("(université bishop's)", Pattern.CASE_INSENSITIVE);
 	private static final String UNIVERSITE_BISHOP_REPLACEMENT = U_BISHOP_S;
 
@@ -551,11 +593,18 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		tripHeadsign = UNIVERSITE_DE_SHERBROOKE.matcher(tripHeadsign).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		tripHeadsign = UNIVERSITE_BISHOP.matcher(tripHeadsign).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
 		tripHeadsign = AVENUE.matcher(tripHeadsign).replaceAll(AVENUE_REPLACEMENT);
+		tripHeadsign = MSpec.cleanStreetTypesFRCA(tripHeadsign);
 		return MSpec.cleanLabelFR(tripHeadsign);
 	}
 
 	private static final Pattern AVENUE = Pattern.compile("( avenue)", Pattern.CASE_INSENSITIVE);
-	private static final String AVENUE_REPLACEMENT = " av.";
+	private static final String AVENUE_REPLACEMENT = " " + AVE;
+
+	private static final Pattern QUAI = Pattern.compile("( Quai )", Pattern.CASE_INSENSITIVE);
+	private static final String QUAI_REPLACEMENT = " Q. ";
+
+	private static final Pattern NO = Pattern.compile("(\\(no\\.([\\d]+)\\))", Pattern.CASE_INSENSITIVE);
+	private static final String NO_REPLACEMENT = "#$2";
 
 	@Override
 	public String cleanStopName(String gStopName) {
@@ -563,8 +612,23 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		gStopName = UNIVERSITE_DE_SHERBROOKE.matcher(gStopName).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		gStopName = UNIVERSITE_BISHOP.matcher(gStopName).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
 		gStopName = AVENUE.matcher(gStopName).replaceAll(AVENUE_REPLACEMENT);
-		return super.cleanStopNameFR(gStopName);
+		gStopName = QUAI.matcher(gStopName).replaceAll(QUAI_REPLACEMENT);
+		gStopName = NO.matcher(gStopName).replaceAll(NO_REPLACEMENT);
+		gStopName = MSpec.cleanStreetTypesFRCA(gStopName);
+		return MSpec.cleanLabelFR(gStopName);
 	}
+
+	private static final String A = "A";
+	private static final String B = "B";
+	private static final String C = "C";
+	private static final String D = "D";
+	private static final String E = "E";
+	private static final String F = "F";
+	private static final String G = "G";
+	private static final String H = "H";
+	private static final String I = "I";
+	private static final String J = "J";
+	private static final String K = "K";
 
 	@Override
 	public int getStopId(GStop gStop) {
@@ -575,27 +639,27 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		matcher.find();
 		int digits = Integer.parseInt(matcher.group());
 		int stopId = 0;
-		if (gStop.stop_id.endsWith("A")) {
+		if (gStop.stop_id.endsWith(A)) {
 			stopId += 10000;
-		} else if (gStop.stop_id.endsWith("B")) {
+		} else if (gStop.stop_id.endsWith(B)) {
 			stopId += 20000;
-		} else if (gStop.stop_id.endsWith("C")) {
+		} else if (gStop.stop_id.endsWith(C)) {
 			stopId += 30000;
-		} else if (gStop.stop_id.endsWith("D")) {
+		} else if (gStop.stop_id.endsWith(D)) {
 			stopId += 40000;
-		} else if (gStop.stop_id.endsWith("E")) {
+		} else if (gStop.stop_id.endsWith(E)) {
 			stopId += 50000;
-		} else if (gStop.stop_id.endsWith("F")) {
+		} else if (gStop.stop_id.endsWith(F)) {
 			stopId += 60000;
-		} else if (gStop.stop_id.endsWith("G")) {
+		} else if (gStop.stop_id.endsWith(G)) {
 			stopId += 70000;
-		} else if (gStop.stop_id.endsWith("H")) {
+		} else if (gStop.stop_id.endsWith(H)) {
 			stopId += 80000;
-		} else if (gStop.stop_id.endsWith("I")) {
+		} else if (gStop.stop_id.endsWith(I)) {
 			stopId += 90000;
-		} else if (gStop.stop_id.endsWith("J")) {
+		} else if (gStop.stop_id.endsWith(J)) {
 			stopId += 100000;
-		} else if (gStop.stop_id.endsWith("K")) {
+		} else if (gStop.stop_id.endsWith(K)) {
 			stopId += 110000;
 		} else {
 			System.out.println("Stop doesn't have an ID (end with)! " + gStop);
