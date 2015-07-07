@@ -15,7 +15,7 @@ import org.mtransit.parser.gtfs.data.GStop;
 import org.mtransit.parser.gtfs.data.GTrip;
 import org.mtransit.parser.mt.data.MAgency;
 import org.mtransit.parser.mt.data.MRoute;
-import org.mtransit.parser.mt.data.MSpec;
+import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.mt.data.MTrip;
 
 // http://donnees.ville.sherbrooke.qc.ca/dataset/transpo
@@ -37,11 +37,11 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public void start(String[] args) {
-		System.out.printf("Generating STS bus data...\n");
+		System.out.printf("\nGenerating STS bus data...\n");
 		long start = System.currentTimeMillis();
 		this.serviceIds = extractUsefulServiceIds(args, this);
 		super.start(args);
-		System.out.printf("Generating STS bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
+		System.out.printf("\nGenerating STS bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
 
 	@Override
@@ -263,12 +263,12 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			System.exit(-1);
 			return null;
 		}
-		routeLongName = MSpec.SAINT.matcher(routeLongName).replaceAll(MSpec.SAINT_REPLACEMENT);
+		routeLongName = CleanUtils.SAINT.matcher(routeLongName).replaceAll(CleanUtils.SAINT_REPLACEMENT);
 		routeLongName = STATION_DU.matcher(routeLongName).replaceAll(STATION_DU_REPLACEMENT);
 		routeLongName = UNIVERSITE_DE_SHERBROOKE.matcher(routeLongName).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		routeLongName = UNIVERSITE_BISHOP.matcher(routeLongName).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
-		routeLongName = MSpec.cleanStreetTypesFRCA(routeLongName);
-		return MSpec.cleanLabel(routeLongName);
+		routeLongName = CleanUtils.cleanStreetTypesFRCA(routeLongName);
+		return CleanUtils.cleanLabel(routeLongName);
 	}
 
 	private static final String AGENCY_COLOR = "0A3D53";
@@ -593,8 +593,8 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		tripHeadsign = UNIVERSITE_DE_SHERBROOKE.matcher(tripHeadsign).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		tripHeadsign = UNIVERSITE_BISHOP.matcher(tripHeadsign).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
 		tripHeadsign = AVENUE.matcher(tripHeadsign).replaceAll(AVENUE_REPLACEMENT);
-		tripHeadsign = MSpec.cleanStreetTypesFRCA(tripHeadsign);
-		return MSpec.cleanLabelFR(tripHeadsign);
+		tripHeadsign = CleanUtils.cleanStreetTypesFRCA(tripHeadsign);
+		return CleanUtils.cleanLabelFR(tripHeadsign);
 	}
 
 	private static final Pattern AVENUE = Pattern.compile("( avenue)", Pattern.CASE_INSENSITIVE);
@@ -614,8 +614,8 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		gStopName = AVENUE.matcher(gStopName).replaceAll(AVENUE_REPLACEMENT);
 		gStopName = QUAI.matcher(gStopName).replaceAll(QUAI_REPLACEMENT);
 		gStopName = NO.matcher(gStopName).replaceAll(NO_REPLACEMENT);
-		gStopName = MSpec.cleanStreetTypesFRCA(gStopName);
-		return MSpec.cleanLabelFR(gStopName);
+		gStopName = CleanUtils.cleanStreetTypesFRCA(gStopName);
+		return CleanUtils.cleanLabelFR(gStopName);
 	}
 
 	private static final String A = "A";
