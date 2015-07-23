@@ -83,18 +83,18 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public long getRouteId(GRoute gRoute) {
-		if (StringUtils.isNumeric(gRoute.route_short_name)) {
-			return Long.valueOf(gRoute.route_short_name);
+		if (StringUtils.isNumeric(gRoute.getRouteShortName())) {
+			return Long.valueOf(gRoute.getRouteShortName());
 		}
-		if (GRID_EXPR.equals(gRoute.route_short_name)) {
+		if (GRID_EXPR.equals(gRoute.getRouteShortName())) {
 			return RID_EXPR;
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.route_short_name);
+		Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
 		matcher.find();
 		long digits = Long.parseLong(matcher.group());
-		if (gRoute.route_short_name.endsWith(S)) {
+		if (gRoute.getRouteShortName().endsWith(S)) {
 			digits += 19000l;
-		} else if (gRoute.route_short_name.endsWith(X)) {
+		} else if (gRoute.getRouteShortName().endsWith(X)) {
 			digits += 24000l;
 		} else {
 			System.out.println("Unexpected route ID " + gRoute);
@@ -107,7 +107,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String getRouteShortName(GRoute gRoute) {
-		if (GRID_EXPR.equals(gRoute.route_short_name)) {
+		if (GRID_EXPR.equals(gRoute.getRouteShortName())) {
 			return RTS_EXPRESS;
 		}
 		return super.getRouteShortName(gRoute);
@@ -208,12 +208,12 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String getRouteLongName(GRoute gRoute) {
-		String routeLongName = gRoute.route_long_name;
+		String routeLongName = gRoute.getRouteLongName();
 		if (StringUtils.isEmpty(routeLongName)) {
-			if (GRID_EXPR.equals(gRoute.route_short_name)) {
+			if (GRID_EXPR.equals(gRoute.getRouteShortName())) {
 				routeLongName = IGA_EXTRA_KING_OUEST_NORTHROP_FRYE;
 			} else {
-				Matcher matcher = DIGITS.matcher(gRoute.route_short_name);
+				Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
 				matcher.find();
 				int digits = Integer.parseInt(matcher.group());
 				switch (digits) {
@@ -303,11 +303,11 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String getRouteColor(GRoute gRoute) {
-		if (GRID_EXPR.equals(gRoute.route_short_name)) {
+		if (GRID_EXPR.equals(gRoute.getRouteShortName())) {
 			return COLOR_231F20;
 		}
 		try {
-			Matcher matcher = DIGITS.matcher(gRoute.route_short_name);
+			Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
 			matcher.find();
 			int digits = Integer.parseInt(matcher.group());
 			switch (digits) {
@@ -364,219 +364,219 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
-		String stationName = cleanTripHeadsign(gTrip.trip_headsign);
+		String stationName = cleanTripHeadsign(gTrip.getTripHeadsign());
 		if (mRoute.id == 1l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = BOWEN_TALBOT;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
 		} else if (mRoute.id == 2l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = U_BISHOP_S_OXFORD;
 			} else {
 				stationName = CÉGEP;
 			}
 		} else if (mRoute.id == 3l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = _13_AVE_24_JUIN;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
 		} else if (mRoute.id == 4l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CHALUMEAU;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
 		} else if (mRoute.id == 5l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = _13_AVE_24_JUIN;
 			} else {
 				stationName = CÉGEP;
 			}
 		} else if (mRoute.id == 6l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CAMPUS;
 			} else {
 				stationName = LISIEUX_LACHINE;
 			}
 		} else if (mRoute.id == 7l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS_FLEURIMONT;
 			} else {
 				stationName = ANDRÉ_HALLÉE;
 			}
 		} else if (mRoute.id == 8l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS_FLEURIMONT;
 			} else {
 				stationName = CAMPUS;
 			}
 		} else if (mRoute.id == 9l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CHARDONNERETS;
 			} else {
 				stationName = CAMPUS;
 			}
 		} else if (mRoute.id == 11l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = PLATEAU_ST_JOSEPH;
 			} else {
 				stationName = U_BISHOP_S;
 			}
 		} else if (mRoute.id == 12l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CÉGEP;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
 		} else if (mRoute.id == 13l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = RABY_NORMAND;
 			} else {
 				stationName = CAMPUS;
 			}
 		} else if (mRoute.id == 14l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CÉGEP;
 			} else {
 				stationName = CAMPUS;
 			}
 		} else if (mRoute.id == 15l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = PARC_BLANCHARD;
 			} else {
 				stationName = CAMPUS;
 			}
 		} else if (mRoute.id == 16l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = ONTARIO_PROSPECT;
 			} else {
 				stationName = CAMPUS;
 			}
 		} else if (mRoute.id == 17l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CÉGEP;
 			} else {
 				stationName = PLACE_DUSSAULT;
 			}
 		} else if (mRoute.id == 18l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CAMPUS;
 			} else {
 				stationName = BOURASSA_FRONTIÈRE;
 			}
 		} else if (mRoute.id == 19l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CÉGEP;
 			} else {
 				stationName = LISIEUX_BRÛLÉ;
 			}
 		} else if (mRoute.id == 20l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = ST_FRANÇOIS_BOULOGNE;
 			} else {
 				stationName = CÉGEP;
 			}
 		} else if (mRoute.id == 21l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS;
 			} else {
 				stationName = PLACE_FLEURIMONT;
 			}
 		} else if (mRoute.id == 22l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS;
 			} else {
 				stationName = PLACE_FLEURIMONT;
 			}
 		} else if (mRoute.id == 24l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CAMPUS;
 			} else {
 				stationName = LOTBINIÈRE_NORTH_HATLEY;
 			}
 		} else if (mRoute.id == 25l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = _13_AVE_24_JUIN;
 			} else {
 				stationName = GITE_DU_BEL_ÂGE_CHAMPÊTRE_COQUELICOTS;
 			}
 		} else if (mRoute.id == 26l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = PARC_INDUSTRIEL;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
 		} else if (mRoute.id == 27l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CAMPUS;
 			} else {
 				stationName = VAL_DU_LAC;
 			}
 		} else if (mRoute.id == 28l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = ALEXANDER_GALT_BEATTLE_ATTO;
 			} else {
 				stationName = U_BISHOP_S;
 			}
 		} else if (mRoute.id == 49l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS_HÔTEL_DIEU;
 			} else {
 				stationName = NORTHROP_FRYE;
 			}
 		} else if (mRoute.id == 50l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			} else {
 				stationName = VAL_DES_ARBRES_LALIBERTÉ;
 			}
 		} else if (mRoute.id == 51l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = KRUGER;
 			} else {
 				stationName = CÉGEP;
 			}
 		} else if (mRoute.id == 52l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = TERRASSES_ROCK_FOREST;
 			} else {
 				stationName = AVE_DU_PARC;
 			}
 		} else if (mRoute.id == 53l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS_CHUSFL_PORTE_35;
 			} else {
 				stationName = CAMPUS;
 			}
 		} else if (mRoute.id == 54l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS_FLEURIMONT;
 			} else {
 				stationName = NORTHROP_FRYE;
 			}
 		} else if (mRoute.id == 55l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = _13_AVE_24_JUIN;
 			} else {
 				stationName = DU_MANOIR;
 			}
 		} else if (mRoute.id == 57l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = _13_AVE_24_JUIN;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
 		} else if (mRoute.id == 9999l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				stationName = NORTHROP_FRYE;
 			} else {
 				stationName = IGA_EXTRA_KING_OUEST;
 			}
 		}
-		mTrip.setHeadsignString(stationName, gTrip.direction_id);
+		mTrip.setHeadsignString(stationName, gTrip.getDirectionId());
 	}
 
 	private static final Pattern STATION_DU = Pattern.compile("(station du )", Pattern.CASE_INSENSITIVE);
@@ -632,34 +632,34 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public int getStopId(GStop gStop) {
-		if (StringUtils.isNumeric(gStop.stop_id)) {
-			return Integer.parseInt(gStop.stop_id);
+		if (StringUtils.isNumeric(gStop.getStopId())) {
+			return Integer.parseInt(gStop.getStopId());
 		}
-		Matcher matcher = DIGITS.matcher(gStop.stop_id);
+		Matcher matcher = DIGITS.matcher(gStop.getStopId());
 		matcher.find();
 		int digits = Integer.parseInt(matcher.group());
 		int stopId = 0;
-		if (gStop.stop_id.endsWith(A)) {
+		if (gStop.getStopId().endsWith(A)) {
 			stopId += 10000;
-		} else if (gStop.stop_id.endsWith(B)) {
+		} else if (gStop.getStopId().endsWith(B)) {
 			stopId += 20000;
-		} else if (gStop.stop_id.endsWith(C)) {
+		} else if (gStop.getStopId().endsWith(C)) {
 			stopId += 30000;
-		} else if (gStop.stop_id.endsWith(D)) {
+		} else if (gStop.getStopId().endsWith(D)) {
 			stopId += 40000;
-		} else if (gStop.stop_id.endsWith(E)) {
+		} else if (gStop.getStopId().endsWith(E)) {
 			stopId += 50000;
-		} else if (gStop.stop_id.endsWith(F)) {
+		} else if (gStop.getStopId().endsWith(F)) {
 			stopId += 60000;
-		} else if (gStop.stop_id.endsWith(G)) {
+		} else if (gStop.getStopId().endsWith(G)) {
 			stopId += 70000;
-		} else if (gStop.stop_id.endsWith(H)) {
+		} else if (gStop.getStopId().endsWith(H)) {
 			stopId += 80000;
-		} else if (gStop.stop_id.endsWith(I)) {
+		} else if (gStop.getStopId().endsWith(I)) {
 			stopId += 90000;
-		} else if (gStop.stop_id.endsWith(J)) {
+		} else if (gStop.getStopId().endsWith(J)) {
 			stopId += 100000;
-		} else if (gStop.stop_id.endsWith(K)) {
+		} else if (gStop.getStopId().endsWith(K)) {
 			stopId += 110000;
 		} else {
 			System.out.println("Stop doesn't have an ID (end with)! " + gStop);
