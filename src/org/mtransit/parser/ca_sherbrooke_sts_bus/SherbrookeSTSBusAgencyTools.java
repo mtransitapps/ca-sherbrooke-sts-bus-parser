@@ -21,6 +21,7 @@ import org.mtransit.parser.mt.data.MTrip;
 // http://donnees.ville.sherbrooke.qc.ca/dataset/transpo
 // http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-02-03T20:44:37.634Z/gtfs-stsherbrooke-hiver2015.zip
 // http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-06-08T14:16:04.768Z/gtfs-ete-2015-stsherbrooke-20150602.zip
+// http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-07-29T17:49:39.316Z/gtfs-stsherbrooke-automne2015-20150728.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
