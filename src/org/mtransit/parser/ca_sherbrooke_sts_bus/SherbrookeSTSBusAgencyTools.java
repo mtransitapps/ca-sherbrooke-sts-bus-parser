@@ -366,211 +366,211 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
 		String stationName = cleanTripHeadsign(gTrip.getTripHeadsign());
-		if (mRoute.id == 1l) {
+		if (mRoute.getId() == 1l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = BOWEN_TALBOT;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
-		} else if (mRoute.id == 2l) {
+		} else if (mRoute.getId() == 2l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = U_BISHOP_S_OXFORD;
 			} else {
 				stationName = CÉGEP;
 			}
-		} else if (mRoute.id == 3l) {
+		} else if (mRoute.getId() == 3l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = _13_AVE_24_JUIN;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
-		} else if (mRoute.id == 4l) {
+		} else if (mRoute.getId() == 4l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CHALUMEAU;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
-		} else if (mRoute.id == 5l) {
+		} else if (mRoute.getId() == 5l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = _13_AVE_24_JUIN;
 			} else {
 				stationName = CÉGEP;
 			}
-		} else if (mRoute.id == 6l) {
+		} else if (mRoute.getId() == 6l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CAMPUS;
 			} else {
 				stationName = LISIEUX_LACHINE;
 			}
-		} else if (mRoute.id == 7l) {
+		} else if (mRoute.getId() == 7l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS_FLEURIMONT;
 			} else {
 				stationName = ANDRÉ_HALLÉE;
 			}
-		} else if (mRoute.id == 8l) {
+		} else if (mRoute.getId() == 8l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS_FLEURIMONT;
 			} else {
 				stationName = CAMPUS;
 			}
-		} else if (mRoute.id == 9l) {
+		} else if (mRoute.getId() == 9l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CHARDONNERETS;
 			} else {
 				stationName = CAMPUS;
 			}
-		} else if (mRoute.id == 11l) {
+		} else if (mRoute.getId() == 11l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = PLATEAU_ST_JOSEPH;
 			} else {
 				stationName = U_BISHOP_S;
 			}
-		} else if (mRoute.id == 12l) {
+		} else if (mRoute.getId() == 12l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CÉGEP;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
-		} else if (mRoute.id == 13l) {
+		} else if (mRoute.getId() == 13l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = RABY_NORMAND;
 			} else {
 				stationName = CAMPUS;
 			}
-		} else if (mRoute.id == 14l) {
+		} else if (mRoute.getId() == 14l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CÉGEP;
 			} else {
 				stationName = CAMPUS;
 			}
-		} else if (mRoute.id == 15l) {
+		} else if (mRoute.getId() == 15l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = PARC_BLANCHARD;
 			} else {
 				stationName = CAMPUS;
 			}
-		} else if (mRoute.id == 16l) {
+		} else if (mRoute.getId() == 16l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = ONTARIO_PROSPECT;
 			} else {
 				stationName = CAMPUS;
 			}
-		} else if (mRoute.id == 17l) {
+		} else if (mRoute.getId() == 17l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CÉGEP;
 			} else {
 				stationName = PLACE_DUSSAULT;
 			}
-		} else if (mRoute.id == 18l) {
+		} else if (mRoute.getId() == 18l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CAMPUS;
 			} else {
 				stationName = BOURASSA_FRONTIÈRE;
 			}
-		} else if (mRoute.id == 19l) {
+		} else if (mRoute.getId() == 19l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CÉGEP;
 			} else {
 				stationName = LISIEUX_BRÛLÉ;
 			}
-		} else if (mRoute.id == 20l) {
+		} else if (mRoute.getId() == 20l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = ST_FRANÇOIS_BOULOGNE;
 			} else {
 				stationName = CÉGEP;
 			}
-		} else if (mRoute.id == 21l) {
+		} else if (mRoute.getId() == 21l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS;
 			} else {
 				stationName = PLACE_FLEURIMONT;
 			}
-		} else if (mRoute.id == 22l) {
+		} else if (mRoute.getId() == 22l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS;
 			} else {
 				stationName = PLACE_FLEURIMONT;
 			}
-		} else if (mRoute.id == 24l) {
+		} else if (mRoute.getId() == 24l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CAMPUS;
 			} else {
 				stationName = LOTBINIÈRE_NORTH_HATLEY;
 			}
-		} else if (mRoute.id == 25l) {
+		} else if (mRoute.getId() == 25l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = _13_AVE_24_JUIN;
 			} else {
 				stationName = GITE_DU_BEL_ÂGE_CHAMPÊTRE_COQUELICOTS;
 			}
-		} else if (mRoute.id == 26l) {
+		} else if (mRoute.getId() == 26l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = PARC_INDUSTRIEL;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
-		} else if (mRoute.id == 27l) {
+		} else if (mRoute.getId() == 27l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CAMPUS;
 			} else {
 				stationName = VAL_DU_LAC;
 			}
-		} else if (mRoute.id == 28l) {
+		} else if (mRoute.getId() == 28l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = ALEXANDER_GALT_BEATTLE_ATTO;
 			} else {
 				stationName = U_BISHOP_S;
 			}
-		} else if (mRoute.id == 49l) {
+		} else if (mRoute.getId() == 49l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS_HÔTEL_DIEU;
 			} else {
 				stationName = NORTHROP_FRYE;
 			}
-		} else if (mRoute.id == 50l) {
+		} else if (mRoute.getId() == 50l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			} else {
 				stationName = VAL_DES_ARBRES_LALIBERTÉ;
 			}
-		} else if (mRoute.id == 51l) {
+		} else if (mRoute.getId() == 51l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = KRUGER;
 			} else {
 				stationName = CÉGEP;
 			}
-		} else if (mRoute.id == 52l) {
+		} else if (mRoute.getId() == 52l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = TERRASSES_ROCK_FOREST;
 			} else {
 				stationName = AVE_DU_PARC;
 			}
-		} else if (mRoute.id == 53l) {
+		} else if (mRoute.getId() == 53l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS_CHUSFL_PORTE_35;
 			} else {
 				stationName = CAMPUS;
 			}
-		} else if (mRoute.id == 54l) {
+		} else if (mRoute.getId() == 54l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = CHUS_FLEURIMONT;
 			} else {
 				stationName = NORTHROP_FRYE;
 			}
-		} else if (mRoute.id == 55l) {
+		} else if (mRoute.getId() == 55l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = _13_AVE_24_JUIN;
 			} else {
 				stationName = DU_MANOIR;
 			}
-		} else if (mRoute.id == 57l) {
+		} else if (mRoute.getId() == 57l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = _13_AVE_24_JUIN;
 			} else {
 				stationName = CARREFOUR_DE_L_ESTRIE;
 			}
-		} else if (mRoute.id == 9999l) {
+		} else if (mRoute.getId() == 9999l) {
 			if (gTrip.getDirectionId() == 0) {
 				stationName = NORTHROP_FRYE;
 			} else {
