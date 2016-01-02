@@ -19,8 +19,8 @@ import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.mt.data.MTrip;
 
 // http://donnees.ville.sherbrooke.qc.ca/dataset/transpo
-// http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-12-07T14%3A28%3A17.310Z/gtfs-fetes2015-stsherbrooke-20151102.zip
-// http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-12-07T14:28:17.310Z/gtfs-fetes2015-stsherbrooke-20151102.zip
+// http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-12-07T14%3A31%3A00.547Z/gtfs-hiver2016-stsherbrooke-20151026.zip
+// http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-12-07T14:31:00.547Z/gtfs-hiver2016-stsherbrooke-20151026.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -193,6 +193,8 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String TERRASSES_ROCK_FOREST = TERRASSES + " " + ROCK_FOREST;
 	private static final String É_FONTAINE = "É.-Fontaine";
 	private static final String ST_ROCH = "St-Roch";
+	private static final String FRONTENAC = "Frontenac";
+	private static final String BELVÉDÈRE = "Belvédère";
 	private static final String ST_ROCH_É_FONTAINE = ST_ROCH + SLASH + É_FONTAINE;
 	private static final String CHARDONNERETS_MARIKA = CHARDONNERETS + SLASH + MARIKA;
 	private static final String PLACE_FLEURIMONT_GALVIN = PLACE_FLEURIMONT + SLASH + GALVIN;
@@ -202,6 +204,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String HABITAT_ANDRÉ = HABITAT + SLASH + ANDRÉ;
 	private static final String RABY_NORMAND = RABY + SLASH + NORMAND;
 	private static final String ONTARIO_PROSPECT = ONTARIO + SLASH + PROSPECT;
+	private static final String FRONTENAC_BELVÉDÈRE = FRONTENAC + SLASH + BELVÉDÈRE;
 	private static final String IGA_EXTRA_KING_OUEST = IGA_EXTRA + SLASH + KING_OUEST;
 	private static final String BOWEN_TALBOT = BOWEN + SLASH + TALBOT;
 	private static final String BOURASSA_FRONTIÈRE = BOURASSA + SLASH + FRONTIÈRE;
@@ -553,6 +556,16 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString(CÉGEP, mTrip.getHeadsignId());
 				return true;
 			}
+		} else if (mTrip.getRouteId() == 16l) {
+			if (mTrip.getHeadsignId() == 0) {
+				mTrip.setHeadsignString(FRONTENAC_BELVÉDÈRE, mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == 16l + RID_ENDS_WITH_X) { // 16X
+			if (mTrip.getHeadsignId() == 1) {
+				mTrip.setHeadsignString(CAMPUS, mTrip.getHeadsignId());
+				return true;
+			}
 		} else if (mTrip.getRouteId() == 17l) {
 			if (mTrip.getHeadsignId() == 0) {
 				mTrip.setHeadsignString(CÉGEP, mTrip.getHeadsignId());
@@ -599,6 +612,11 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		} else if (mTrip.getRouteId() == 50l) {
 			if (mTrip.getHeadsignId() == 1) {
 				mTrip.setHeadsignString(VAL_DES_ARBRES, mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == 52l) {
+			if (mTrip.getHeadsignId() == 0) {
+				mTrip.setHeadsignString(TERRASSES_ROCK_FOREST, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 53l) {
