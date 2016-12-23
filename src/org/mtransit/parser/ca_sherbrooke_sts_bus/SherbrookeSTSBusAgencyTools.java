@@ -18,9 +18,8 @@ import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.mt.data.MTrip;
 
-// http://donnees.ville.sherbrooke.qc.ca/dataset/transpo
-// http://donnees.ville.sherbrooke.qc.ca/dataset/transpo/resource/971c44dc-0534-4d7f-a383-6da4c1efb88b
-// http://donnees.ville.sherbrooke.qc.ca/storage/f/2016-08-03T12:28:08.806Z/gtfs-stsherbrooke-automne2016-20160802.zip
+// https://www.donneesquebec.ca/recherche/fr/dataset/transport-sts
+// https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/ca2ea1fb-06ec-483b-ab16-f3485a533e65/download/gtfssitewebstsherbrookefetes201620161111.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
