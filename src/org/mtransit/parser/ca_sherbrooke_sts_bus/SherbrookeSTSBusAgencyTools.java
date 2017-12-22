@@ -683,6 +683,12 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(PLACE_FLEURIMONT, mTrip.getHeadsignId());
 				return true;
+			} else if (Arrays.asList( //
+					PLACE_FLEURIMONT, //
+					CHUS_URGENCE //
+					).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(CHUS_URGENCE, mTrip.getHeadsignId());
+				return true;
 			}
 		} else if (mTrip.getRouteId() == 24L) {
 			if (Arrays.asList( //
@@ -800,6 +806,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					PROSPECT + " / Duvernay", //
 					"Frontenac / Belvédère", //
 					"McGregor / Sauvignon", //
+					CHUS_URGENCE, //
 					NORTHROP_FRYE //
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(NORTHROP_FRYE, mTrip.getHeadsignId());
@@ -816,9 +823,6 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString(IGA_EXTRA, mTrip.getHeadsignId());
 				return true;
 			}
-		}
-		if (isGoodEnoughAccepted()) {
-			return super.mergeHeadsign(mTrip, mTripToMerge);
 		}
 		System.out.printf("\nUnexpected trips to merge %s & %s!\n", mTrip, mTripToMerge);
 		System.exit(-1);
