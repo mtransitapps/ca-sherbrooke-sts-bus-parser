@@ -22,6 +22,7 @@ import org.mtransit.parser.mt.data.MTrip;
 
 // https://www.donneesquebec.ca/recherche/fr/dataset/transport-sts
 // https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/b7f43b2a-2557-4e3b-ba12-5a5c6d4de5b1/download/gtfsstsherbrooke.zip
+// NEXT: https://www.donneesquebec.ca/recherche/fr/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/ee82a1e9-7405-47c6-ac5e-6c0ffda92ce4/download/gtfsstsherbrookeautomne201820180731.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -337,35 +338,10 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		return AGENCY_COLOR;
 	}
 
-	// private static final String COLOR_EBDB01 = "EBDB01";
-	private static final String COLOR_E6E600 = "E6E600";
-	private static final String COLOR_00B1B0 = "00B1B0";
-	private static final String COLOR_BC1B8D = "BC1B8D";
-	private static final String COLOR_6C6D70 = "6C6D70";
-	private static final String COLOR_09428E = "09428E";
-	private static final String COLOR_FDBC12 = "FDBC12";
-	private static final String COLOR_EE1D23 = "EE1D23";
-	private static final String COLOR_ED028C = "ED028C";
-	private static final String COLOR_9E015E = "9E015E";
-	private static final String COLOR_B3D234 = "B3D234";
-	private static final String COLOR_F289B7 = "F289B7";
-	private static final String COLOR_0089CF = "0089CF";
-	private static final String COLOR_7671B4 = "7671B4";
-	private static final String COLOR_F7931D = "F7931D";
-	private static final String COLOR_3AB54A = "3AB54A";
-	private static final String COLOR_00AEEF = "00AEEF";
-	private static final String COLOR_A8A9AD = "A8A9AD";
-	private static final String COLOR_A25B09 = "A25B09";
-	private static final String COLOR_007E3D = "007E3D";
-	private static final String COLOR_692C91 = "692C91";
-	private static final String COLOR_56CBF5 = "56CBF5";
-	private static final String COLOR_231F20 = "231F20";
-	private static final String COLOR_B31E7A = "B31E7A";
-
 	@Override
 	public String getRouteColor(GRoute gRoute) {
 		if (GRID_EXPR.equals(gRoute.getRouteShortName())) {
-			return COLOR_231F20;
+			return "231F20";
 		}
 		try {
 			Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
@@ -373,43 +349,44 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 				int digits = Integer.parseInt(matcher.group());
 				switch (digits) {
 				// @formatter:off
-				case 1: return COLOR_B3D234;
-				case 2: return COLOR_9E015E;
-				case 3: return COLOR_0089CF;
-				case 4: return COLOR_A8A9AD;
-				case 5: return COLOR_FDBC12;
-				case 6: return COLOR_F289B7;
-				case 7: return COLOR_EE1D23;
-				case 8: return COLOR_3AB54A;
-				case 9: return COLOR_A25B09;
-				case 11: return COLOR_E6E600;
-				case 12: return COLOR_007E3D;
-				case 13: return COLOR_00B1B0;
-				case 14: return COLOR_BC1B8D;
-				case 15: return COLOR_F7931D;
-				case 16: return COLOR_6C6D70;
-				case 17: return COLOR_09428E;
-				case 18: return COLOR_ED028C;
-				case 19: return COLOR_56CBF5;
-				case 20: return COLOR_6C6D70;
-				case 21: return COLOR_09428E;
-				case 22: return COLOR_FDBC12;
-				case 23: return COLOR_B31E7A;
-				case 24: return COLOR_EE1D23;
-				case 25: return COLOR_ED028C;
-				case 26: return COLOR_9E015E;
-				case 27: return COLOR_B3D234;
-				case 28: return COLOR_F289B7;
-				case 29: return COLOR_0089CF;
-				case 49: return COLOR_7671B4;
-				case 50: return COLOR_F7931D;
-				case 51: return COLOR_3AB54A;
-				case 52: return COLOR_00AEEF;
-				case 53: return COLOR_A8A9AD;
-				case 54: return COLOR_A25B09;
-				case 55: return COLOR_007E3D;
-				case 56: return COLOR_692C91;
-				case 57: return COLOR_56CBF5;
+				case 1: return "B3D234";
+				case 2: return "9E015E";
+				case 3: return "0089CF";
+				case 4: return "A8A9AD";
+				case 5: return "FDBC12";
+				case 6: return "F289B7";
+				case 7: return "EE1D23";
+				case 8: return "3AB54A";
+				case 9: return "A25B09";
+				case 11: return "E6E600";
+				case 12: return "007E3D";
+				case 13: return "00B1B0";
+				case 14: return "BC1B8D";
+				case 15: return "F7931D";
+				case 16: return "6C6D70";
+				case 17: return "09428E";
+				case 18: return "ED028C";
+				case 19: return "56CBF5";
+				case 20: return "6C6D70";
+				case 21: return "09428E";
+				case 22: return "FDBC12";
+				case 23: return "B31E7A";
+				case 24: return "EE1D23";
+				case 25: return "ED028C";
+				case 26: return "9E015E";
+				case 27: return "B3D234";
+				case 28: return "F289B7";
+				case 29: return "0089CF";
+				case 49: return "7671B4";
+				case 50: return "F7931D";
+				case 51: return "3AB54A";
+				case 52: return "00AEEF";
+				case 53: return "A8A9AD";
+				case 54: return "A25B09";
+				case 55: return "007E3D";
+				case 56: return "692C91";
+				case 57: return "56CBF5";
+				case 70: return "544CA9";
 				// @formatter:on
 				}
 			}
