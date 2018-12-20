@@ -22,7 +22,8 @@ import org.mtransit.parser.mt.data.MTrip;
 
 // https://www.donneesquebec.ca/recherche/fr/dataset/transport-sts
 // https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/b7f43b2a-2557-4e3b-ba12-5a5c6d4de5b1/download/gtfsstsherbrooke.zip
-// NEXT: https://www.donneesquebec.ca/recherche/fr/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/ee82a1e9-7405-47c6-ac5e-6c0ffda92ce4/download/gtfsstsherbrookeautomne201820180731.zip
+// NEXT: https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/4a71b7f1-4a35-4ff5-841b-6a3e42181c81/download/gtfsfetes2018.zip
+// NEXT NEXT: https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/ee82a1e9-7405-47c6-ac5e-6c0ffda92ce4/download/gtfshiver2019stsh20181218.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
