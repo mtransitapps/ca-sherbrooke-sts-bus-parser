@@ -22,8 +22,7 @@ import org.mtransit.parser.mt.data.MTrip;
 
 // https://www.donneesquebec.ca/recherche/fr/dataset/transport-sts
 // https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/b7f43b2a-2557-4e3b-ba12-5a5c6d4de5b1/download/gtfsstsherbrooke.zip
-// NEXT: https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/4a71b7f1-4a35-4ff5-841b-6a3e42181c81/download/gtfsfetes2018.zip
-// NEXT NEXT: https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/ee82a1e9-7405-47c6-ac5e-6c0ffda92ce4/download/gtfshiver2019stsh20181218.zip
+// NEXT: https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/ee82a1e9-7405-47c6-ac5e-6c0ffda92ce4/download/gtfshiver2019stsh20181218.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -84,13 +83,13 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern DIGITS = Pattern.compile("[\\d]+");
 
 	private static final String GRID_EXPR = "EXPR";
-	private static final long RID_EXPR = 9999l;
+	private static final long RID_EXPR = 9_999L;
 
 	private static final String S = "S";
 	private static final String X = "X";
 
-	private static final long RID_ENDS_WITH_S = 19000l;
-	private static final long RID_ENDS_WITH_X = 24000l;
+	private static final long RID_ENDS_WITH_S = 19_000L;
+	private static final long RID_ENDS_WITH_X = 24_000L;
 
 	@Override
 	public long getRouteId(GRoute gRoute) {
@@ -453,6 +452,14 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					CARREFOUR_DE_L_ESTRIE //
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CARREFOUR_DE_L_ESTRIE, mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == 3L + RID_ENDS_WITH_S) { // 3S
+			if (Arrays.asList( //
+					"Industriel / Letellier", //
+					"Dépôt" //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Dépôt", mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 4L) {
