@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.DefaultAgencyTools;
+import org.mtransit.parser.MTLog;
 import org.mtransit.parser.Utils;
 import org.mtransit.parser.gtfs.data.GCalendar;
 import org.mtransit.parser.gtfs.data.GCalendarDate;
@@ -22,7 +23,7 @@ import org.mtransit.parser.mt.data.MTrip;
 
 // https://www.donneesquebec.ca/recherche/fr/dataset/transport-sts
 // CURRENT: https://www.donneesquebec.ca/recherche/fr/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/b7f43b2a-2557-4e3b-ba12-5a5c6d4de5b1/download/gtfsstsherbrooke.zip
-// NEXT:    https://www.donneesquebec.ca/recherche/fr/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/3c022ca1-e51d-4268-8c63-e77f662b912d/download/gtfs_donneesouvertes_stsh_fetes2020_20201130.zip
+// NEXT:    https://www.donneesquebec.ca/recherche/fr/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/9765c406-0feb-40df-8807-e3991a42f1df/download/gtfs_donneesouverters_stsh_hiver2021_20201215.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -39,11 +40,11 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public void start(String[] args) {
-		System.out.printf("\nGenerating STS bus data...");
+		MTLog.log("Generating STS bus data..");
 		long start = System.currentTimeMillis();
 		this.serviceIds = extractUsefulServiceIds(args, this);
 		super.start(args);
-		System.out.printf("\nGenerating STS bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
+		MTLog.log("Generating STS bus data... DONE in %s", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
 
 	@Override
@@ -108,9 +109,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 				return digits + RID_ENDS_WITH_X;
 			}
 		}
-		System.out.printf("\nUnexpected route ID for %s!\n", gRoute);
-		System.exit(-1);
-		return -1l;
+		throw new MTLog.Fatal("Unexpected route ID for %s!", gRoute);
 	}
 
 	private static final String RTS_EXPRESS = "E";
@@ -126,12 +125,12 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String RLN_SPLIT = "-";
 
 	// http://www.toponymie.gouv.qc.ca/ct/normes-procedures/terminologie-geographique/liste-termes-geographiques.html
-	private static final String AVE = "Av.";
-	private static final String CARREFOUR = "Carref.";
+	private static final String AVE = "Av";
+	private static final String CARREFOUR = "Carref";
 	private static final String PARC = "Parc";
 	private static final String PLACE = "Place";
-	private static final String PLATEAU_SHORT = "Pl.";
-	private static final String PARC_INDUSTRIEL = PARC + " Ind.";
+	private static final String PLATEAU_SHORT = "Pl";
+	private static final String PARC_INDUSTRIEL = PARC + " Ind";
 	private static final String TERRASSES = "Tsses";
 
 	private static final String _SLASH_ = " / ";
@@ -319,9 +318,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			}
 		}
 		if (StringUtils.isEmpty(routeLongName)) {
-			System.out.printf("\nUnexpected route long name for %s!\n", gRoute);
-			System.exit(-1);
-			return null;
+			throw new MTLog.Fatal("Unexpected route long name for %s!", gRoute);
 		}
 		routeLongName = CleanUtils.SAINT.matcher(routeLongName).replaceAll(CleanUtils.SAINT_REPLACEMENT);
 		routeLongName = STATION_DU.matcher(routeLongName).replaceAll(STATION_DU_REPLACEMENT);
@@ -391,14 +388,9 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					// @formatter:on
 					}
 				}
-				System.out.printf("\nUnexpected route color %s!\n", gRoute);
-				System.exit(-1);
-				return null;
+				throw new MTLog.Fatal("Unexpected route color %s!", gRoute);
 			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.printf("\nUnexpected route color %s!\n", gRoute);
-				System.exit(-1);
-				return null;
+				throw new MTLog.Fatal(e, "Unexpected route color %s!", gRoute);
 			}
 		}
 		return super.getRouteColor(gRoute);
@@ -475,7 +467,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			} else if (Arrays.asList( //
 					CEGEP, //
-					"Galt E." + _SLASH_ + "Conseil", //
+					"Galt E" + _SLASH_ + "Conseil", //
 					CARREFOUR_DE_L_ESTRIE //
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CARREFOUR_DE_L_ESTRIE, mTrip.getHeadsignId());
@@ -483,7 +475,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 4L + RID_ENDS_WITH_S) { // 4S
 			if (Arrays.asList( //
-					"King E." + _SLASH_ + "Raby", //
+					"King E" + _SLASH_ + "Raby", //
 					_13_AVE_24_JUIN //
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(_13_AVE_24_JUIN, mTrip.getHeadsignId());
@@ -497,7 +489,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 6L) {
 			if (Arrays.asList( //
-					"Galt O." + _SLASH_ + LISIEUX, //
+					"Galt O" + _SLASH_ + LISIEUX, //
 					U_DE_S //
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(U_DE_S, mTrip.getHeadsignId());
@@ -556,7 +548,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					CEGEP, //
 					PLACE_FLEURIMONT, //
-					"King E." + _SLASH_ + "Raby", //
+					"King E" + _SLASH_ + "Raby", //
 					CHARDONNERETS_MARIKA //
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CHARDONNERETS_MARIKA, mTrip.getHeadsignId());
@@ -582,7 +574,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					CARREFOUR_DE_L_ESTRIE, // SAME
 					HABITAT_ANDRE, // SAME
 					U_DE_S, // SAME
-					"Bl. Université (Triolet)", //
+					"Bl Université (Triolet)", //
 					"McGregor" + _SLASH_ + "Sauvignon", //
 					PLATEAU_ST_JOSEPH //
 					).containsAll(headsignsValues)) {
@@ -630,7 +622,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString(CEGEP, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
-					"King O." + _SLASH_ + "Sauvé", //
+					"King O" + _SLASH_ + "Sauvé", //
 					PLACE_DUSSAULT //
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(PLACE_DUSSAULT, mTrip.getHeadsignId());
@@ -646,13 +638,13 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 19L) {
 			if (Arrays.asList( //
-					"Galt O." + _SLASH_ + LISIEUX, //
+					"Galt O" + _SLASH_ + LISIEUX, //
 					CEGEP //
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CEGEP, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
-					"Galt O." + _SLASH_ + LISIEUX, //
+					"Galt O" + _SLASH_ + LISIEUX, //
 					LISIEUX_LACHINE, //
 					LISIEUX_BRÛLÉ //
 					).containsAll(headsignsValues)) {
@@ -667,15 +659,15 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString(CHUS_URGENCE, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
-					"King E." + _SLASH_ + "Lemire", //
+					"King E" + _SLASH_ + "Lemire", //
 					"Duplessis" + _SLASH_ + "Lemire" //
 			).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString("Duplessis" + _SLASH_ + "Lemire", mTrip.getHeadsignId()); // King E." + _SLASH_ + "Lemire
+				mTrip.setHeadsignString("Duplessis" + _SLASH_ + "Lemire", mTrip.getHeadsignId()); // King E" + _SLASH_ + "Lemire
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 22L) {
 			if (Arrays.asList( //
-					"King E." + _SLASH_ + "Raby", //
+					"King E" + _SLASH_ + "Raby", //
 					PLACE_FLEURIMONT //
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(PLACE_FLEURIMONT, mTrip.getHeadsignId());
@@ -724,7 +716,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 49L) {
 			if (Arrays.asList( //
-					"CHUS H.-D. (Bowen)", //
+					"CHUS H-D (Bowen)", //
 					NORTHROP_FRYE //
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(NORTHROP_FRYE, mTrip.getHeadsignId());
@@ -802,7 +794,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					CEGEP, // SAME
 					DEPOT, // SAME
 					LISIEUX_LACHINE, // SAME
-					"Pl. St-Joseph", //
+					"Pl St-Joseph", //
 					PROSPECT + _SLASH_ + "Duvernay", //
 					"Frontenac" + _SLASH_ + "Belvédère", //
 					"McGregor" + _SLASH_ + "Sauvignon", //
@@ -824,9 +816,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			}
 		}
-		System.out.printf("\nUnexpected trips to merge %s & %s!\n", mTrip, mTripToMerge);
-		System.exit(-1);
-		return false;
+		throw new MTLog.Fatal("Unexpected trips to merge %s & %s!", mTrip, mTripToMerge);
 	}
 
 	private static final Pattern STATION_DU = Pattern.compile("(station du )", Pattern.CASE_INSENSITIVE);
@@ -835,10 +825,10 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern STATIONNEMENT = Pattern.compile("(^stat\\. |^stationnement )", Pattern.CASE_INSENSITIVE);
 	private static final String STATIONNEMENT_REPLACEMENT = StringUtils.EMPTY;
 
-	private static final Pattern UNIVERSITE_DE_SHERBROOKE = Pattern.compile("(université de sherbrooke)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern UNIVERSITE_DE_SHERBROOKE = Pattern.compile("(université de sherbrooke)", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final String UNIVERSITE_DE_SHERBROOKE_REPLACEMENT = U_DE_S;
 
-	private static final Pattern UNIVERSITE_BISHOP = Pattern.compile("(université bishop's|université bishop|univerité bishop)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern UNIVERSITE_BISHOP = Pattern.compile("(université bishop's|université bishop|univerité bishop)", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final String UNIVERSITE_BISHOP_REPLACEMENT = U_BISHOP_S;
 
 	private static final Pattern DASH_ = Pattern.compile("( \\- )", Pattern.CASE_INSENSITIVE);
@@ -846,7 +836,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static final String CLEAN_ET_REPLACEMENT = "$2/$4";
 
-	private static final Pattern PLATEAU = Pattern.compile("((^|\\W){1}(plateau)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern PLATEAU = Pattern.compile("((^|\\W)(plateau)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String PLATEAU_REPLACEMENT = "$2" + PLATEAU_SHORT + "$4";
 
 	@Override
@@ -933,13 +923,10 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			} else if (gStop.getStopId().endsWith(K)) {
 				stopId += 110000;
 			} else {
-				System.out.printf("\nStop doesn't have an ID (end with) %s!\n", gStop);
-				System.exit(-1);
+				throw new MTLog.Fatal("Stop doesn't have an ID (end with) %s!", gStop);
 			}
 			return stopId + digits;
 		}
-		System.out.printf("\nUnexpected stop ID for %s!\n", gStop);
-		System.exit(-1);
-		return -1;
+		throw new MTLog.Fatal("Unexpected stop ID for %s!", gStop);
 	}
 }
