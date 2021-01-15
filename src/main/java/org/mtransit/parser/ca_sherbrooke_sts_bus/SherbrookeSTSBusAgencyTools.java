@@ -1,15 +1,11 @@
 package org.mtransit.parser.ca_sherbrooke_sts_bus;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.MTLog;
+import org.mtransit.parser.StringUtils;
 import org.mtransit.parser.Utils;
 import org.mtransit.parser.gtfs.data.GCalendar;
 import org.mtransit.parser.gtfs.data.GCalendarDate;
@@ -21,12 +17,18 @@ import org.mtransit.parser.mt.data.MAgency;
 import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.mt.data.MTrip;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 // https://www.donneesquebec.ca/recherche/fr/dataset/transport-sts
 // CURRENT: https://www.donneesquebec.ca/recherche/fr/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/b7f43b2a-2557-4e3b-ba12-5a5c6d4de5b1/download/gtfsstsherbrooke.zip
 // NEXT:    https://www.donneesquebec.ca/recherche/fr/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/9765c406-0feb-40df-8807-e3991a42f1df/download/gtfs_donneesouverters_stsh_hiver2021_20201215.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
-	public static void main(String[] args) {
+	public static void main(@Nullable String[] args) {
 		if (args == null || args.length == 0) {
 			args = new String[3];
 			args[0] = "input/gtfs.zip";
@@ -36,46 +38,48 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		new SherbrookeSTSBusAgencyTools().start(args);
 	}
 
-	private HashSet<String> serviceIds;
+	@Nullable
+	private HashSet<Integer> serviceIdInts;
 
 	@Override
-	public void start(String[] args) {
+	public void start(@NotNull String[] args) {
 		MTLog.log("Generating STS bus data..");
 		long start = System.currentTimeMillis();
-		this.serviceIds = extractUsefulServiceIds(args, this);
+		this.serviceIdInts = extractUsefulServiceIdInts(args, this, true);
 		super.start(args);
 		MTLog.log("Generating STS bus data... DONE in %s", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
 
 	@Override
 	public boolean excludingAll() {
-		return this.serviceIds != null && this.serviceIds.isEmpty();
+		return this.serviceIdInts != null && this.serviceIdInts.isEmpty();
 	}
 
 	@Override
-	public boolean excludeCalendar(GCalendar gCalendar) {
-		if (this.serviceIds != null) {
-			return excludeUselessCalendar(gCalendar, this.serviceIds);
+	public boolean excludeCalendar(@NotNull GCalendar gCalendar) {
+		if (this.serviceIdInts != null) {
+			return excludeUselessCalendarInt(gCalendar, this.serviceIdInts);
 		}
 		return super.excludeCalendar(gCalendar);
 	}
 
 	@Override
-	public boolean excludeCalendarDate(GCalendarDate gCalendarDates) {
-		if (this.serviceIds != null) {
-			return excludeUselessCalendarDate(gCalendarDates, this.serviceIds);
+	public boolean excludeCalendarDate(@NotNull GCalendarDate gCalendarDates) {
+		if (this.serviceIdInts != null) {
+			return excludeUselessCalendarDateInt(gCalendarDates, this.serviceIdInts);
 		}
 		return super.excludeCalendarDate(gCalendarDates);
 	}
 
 	@Override
-	public boolean excludeTrip(GTrip gTrip) {
-		if (this.serviceIds != null) {
-			return excludeUselessTrip(gTrip, this.serviceIds);
+	public boolean excludeTrip(@NotNull GTrip gTrip) {
+		if (this.serviceIdInts != null) {
+			return excludeUselessTripInt(gTrip, this.serviceIdInts);
 		}
 		return super.excludeTrip(gTrip);
 	}
 
+	@NotNull
 	@Override
 	public Integer getAgencyRouteType() {
 		return MAgency.ROUTE_TYPE_BUS;
@@ -93,7 +97,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final long RID_ENDS_WITH_X = 24_000L;
 
 	@Override
-	public long getRouteId(GRoute gRoute) {
+	public long getRouteId(@NotNull GRoute gRoute) {
 		if (StringUtils.isNumeric(gRoute.getRouteShortName())) {
 			return Long.parseLong(gRoute.getRouteShortName());
 		}
@@ -114,8 +118,9 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	private static final String RTS_EXPRESS = "E";
 
+	@Nullable
 	@Override
-	public String getRouteShortName(GRoute gRoute) {
+	public String getRouteShortName(@NotNull GRoute gRoute) {
 		if (GRID_EXPR.equals(gRoute.getRouteShortName())) {
 			return RTS_EXPRESS;
 		}
@@ -139,19 +144,19 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String U_BISHOP_S = "U Bishop's";
 	private static final String MANOIR = "Manoir";
 	private static final String DU = "Du";
-	private static final String CHAMPÊTRE = "Champêtre";
-	private static final String GITE_DU_BEL_ÂGE = "Gite Du Bel Âge";
+	private static final String CHAMPETRE = "Champêtre";
+	private static final String GITE_DU_BEL_AGE = "Gite Du Bel Âge";
 	private static final String ALEXANDER_GALT = "Alexander-Galt";
 	private static final String VAL_DES_ARBRES = "Val-Des-Arbres";
 	private static final String ATTO = "Atto";
 	private static final String COQUELICOTS = "Coquelicots";
-	private static final String LALIBERTÉ = "Laliberté";
+	private static final String LALIBERTE = "Laliberté";
 	private static final String ROCK_FOREST = "Rock-Forest";
 	private static final String NORTH_HATLEY = "North Hatley";
-	private static final String LOTBINIÈRE = "Lotbinière";
+	private static final String LOTBINIERE = "Lotbinière";
 	private static final String BOULOGNE = "Boulogne";
-	private static final String ST_FRANÇOIS = "St-François";
-	private static final String FRONTIÈRE = "Frontière";
+	private static final String ST_FRANCOIS = "St-François";
+	private static final String FRONTIERE = "Frontière";
 	private static final String BOURASSA = "Bourassa";
 	private static final String DUSSAULT = "Dussault";
 	private static final String ONTARIO = "Ontario";
@@ -159,17 +164,17 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String BLANCHARD = "Blanchard";
 	private static final String RABY = "Raby";
 	private static final String LACHINE = "Lachine";
-	private static final String HÔTEL_DIEU = "Hôtel-Dieu";
+	private static final String HOTEL_DIEU = "Hôtel-Dieu";
 	private static final String BOWEN = "Bowen";
 	private static final String TALBOT = "Talbot";
 	private static final String KING_OUEST = "King Ouest";
 	private static final String IGA_EXTRA = "IGA Extra";
 	private static final String NORMAND = "Normand";
 	private static final String ST_JOSEPH = "St-Joseph";
-	private static final String BRÛLÉ = "Brûlé";
-	private static final String ANDRÉ = "André";
+	private static final String BRULE = "Brûlé";
+	private static final String ANDRE = "André";
 	private static final String HABITAT = "Habitat";
-	private static final String HALLÉE = "Hallée";
+	private static final String HALLEE = "Hallée";
 	private static final String DEPOT = "Dépôt";
 	private static final String CARREFOUR_DE_L_ESTRIE = CARREFOUR + " De L'Estrie";
 	private static final String NORTHROP_FRYE = "Northrop-Frye";
@@ -179,7 +184,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String FLEURIMONT = "Fleurimont";
 	private static final String CHUS = "CHUS";
 	private static final String CHUS_FLEURIMONT = CHUS + " " + FLEURIMONT;
-	private static final String CHUS_HÔTEL_DIEU = CHUS + " " + HÔTEL_DIEU;
+	private static final String CHUS_HOTEL_DIEU = CHUS + " " + HOTEL_DIEU;
 	private static final String CHUS_URGENCE = CHUS + " (Urgence)";
 	private static final String PLACE_FLEURIMONT = PLACE + " " + FLEURIMONT;
 	private static final String LISIEUX = "Lisieux";
@@ -199,32 +204,32 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String DU_MANOIR = DU + " " + MANOIR;
 	private static final String AVE_DU_PARC = AVE + " " + DU + " " + PARC;
 	private static final String TERRASSES_ROCK_FOREST = TERRASSES + " " + ROCK_FOREST;
-	private static final String É_FONTAINE = "É.-Fontaine";
+	private static final String E_FONTAINE = "É.-Fontaine";
 	private static final String ST_ROCH = "St-Roch";
 	private static final String FRONTENAC = "Frontenac";
-	private static final String BELVÉDÈRE = "Belvédère";
+	private static final String BELVEDERE = "Belvédère";
 
-	private static final String ST_ROCH_É_FONTAINE = ST_ROCH + _SLASH_ + É_FONTAINE;
+	private static final String ST_ROCH_E_FONTAINE = ST_ROCH + _SLASH_ + E_FONTAINE;
 	private static final String CHARDONNERETS_MARIKA = CHARDONNERETS + _SLASH_ + MARIKA;
 	private static final String PLACE_FLEURIMONT_GALVIN = PLACE_FLEURIMONT + _SLASH_ + GALVIN;
-	private static final String LISIEUX_BRÛLÉ = LISIEUX + _SLASH_ + BRÛLÉ;
+	private static final String LISIEUX_BRULE = LISIEUX + _SLASH_ + BRULE;
 	private static final String LISIEUX_LACHINE = LISIEUX + _SLASH_ + LACHINE;
-	private static final String ANDRÉ_HALLÉE = ANDRÉ + _SLASH_ + HALLÉE;
-	private static final String HABITAT_ANDRE = HABITAT + _SLASH_ + ANDRÉ;
+	private static final String ANDRE_HALLEE = ANDRE + _SLASH_ + HALLEE;
+	private static final String HABITAT_ANDRE = HABITAT + _SLASH_ + ANDRE;
 	private static final String RABY_NORMAND = RABY + _SLASH_ + NORMAND;
 	private static final String ONTARIO_PROSPECT = ONTARIO + _SLASH_ + PROSPECT;
-	private static final String FRONTENAC_BELVÉDÈRE = FRONTENAC + _SLASH_ + BELVÉDÈRE;
+	private static final String FRONTENAC_BELVEDERE = FRONTENAC + _SLASH_ + BELVEDERE;
 	private static final String IGA_EXTRA_KING_OUEST = IGA_EXTRA + _SLASH_ + KING_OUEST;
 	private static final String BOWEN_TALBOT = BOWEN + _SLASH_ + TALBOT;
-	private static final String BOURASSA_FRONTIÈRE = BOURASSA + _SLASH_ + FRONTIÈRE;
-	private static final String ST_FRANÇOIS_BOULOGNE = ST_FRANÇOIS + _SLASH_ + BOULOGNE;
+	private static final String BOURASSA_FRONTIERE = BOURASSA + _SLASH_ + FRONTIERE;
+	private static final String ST_FRANCOIS_BOULOGNE = ST_FRANCOIS + _SLASH_ + BOULOGNE;
 	private static final String _13_AVE_24_JUIN = "13e " + AVE + _SLASH_ + "24-Juin";
 	private static final String CHALUMEAU_GALVIN = CHALUMEAU + _SLASH_ + GALVIN;
-	private static final String LOTBINIÈRE_NORTH_HATLEY = LOTBINIÈRE + _SLASH_ + NORTH_HATLEY;
+	private static final String LOTBINIERE_NORTH_HATLEY = LOTBINIERE + _SLASH_ + NORTH_HATLEY;
 	private static final String U_BISHOP_S_OXFORD = U_BISHOP_S + _SLASH_ + OXFORD;
-	private static final String GITE_DU_BEL_ÂGE_CHAMPÊTRE_COQUELICOTS = GITE_DU_BEL_ÂGE + _SLASH_ + CHAMPÊTRE + _SLASH_ + COQUELICOTS;
+	private static final String GITE_DU_BEL_AGE_CHAMPETRE_COQUELICOTS = GITE_DU_BEL_AGE + _SLASH_ + CHAMPETRE + _SLASH_ + COQUELICOTS;
 	private static final String ALEXANDER_GALT_BEATTLE_ATTO = ALEXANDER_GALT + _SLASH_ + BEATTLE + _SLASH_ + ATTO;
-	private static final String VAL_DES_ARBRES_LALIBERTÉ = VAL_DES_ARBRES + _SLASH_ + LALIBERTÉ;
+	private static final String VAL_DES_ARBRES_LALIBERTE = VAL_DES_ARBRES + _SLASH_ + LALIBERTE;
 
 	private static final String IGA_EXTRA_KING_OUEST_NORTHROP_FRYE = IGA_EXTRA_KING_OUEST + " " + RLN_SPLIT + " " + NORTHROP_FRYE;
 	private static final String RLN_1 = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + BOWEN_TALBOT;
@@ -233,7 +238,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String RLN_4 = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + CHALUMEAU;
 	private static final String RLN_5 = CEGEP + " " + RLN_SPLIT + " " + _13_AVE_24_JUIN;
 	private static final String RLN_6 = U_DE_S + " " + RLN_SPLIT + " " + LISIEUX_LACHINE;
-	private static final String RLN_7 = ANDRÉ_HALLÉE + " " + RLN_SPLIT + " " + CHUS_FLEURIMONT;
+	private static final String RLN_7 = ANDRE_HALLEE + " " + RLN_SPLIT + " " + CHUS_FLEURIMONT;
 	private static final String RLN_8 = U_DE_S + " " + RLN_SPLIT + " " + CHUS_FLEURIMONT;
 	private static final String RLN_9 = U_DE_S + " " + RLN_SPLIT + " " + CHARDONNERETS;
 	private static final String RLN_11 = U_BISHOP_S + " " + RLN_SPLIT + " " + PLATEAU_ST_JOSEPH;
@@ -243,19 +248,19 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String RLN_15 = U_DE_S + " " + RLN_SPLIT + " " + PARC_BLANCHARD;
 	private static final String RLN_16 = U_DE_S + " " + RLN_SPLIT + " " + ONTARIO_PROSPECT;
 	private static final String RLN_17 = CEGEP + " " + RLN_SPLIT + " " + PLACE_DUSSAULT;
-	private static final String RLN_18 = U_DE_S + " " + RLN_SPLIT + " " + BOURASSA_FRONTIÈRE;
-	private static final String RLN_19 = CEGEP + " " + RLN_SPLIT + LISIEUX_BRÛLÉ;
-	private static final String RLN_20 = CEGEP + " " + RLN_SPLIT + " " + ST_FRANÇOIS_BOULOGNE + " " + TAXI_BUS;
+	private static final String RLN_18 = U_DE_S + " " + RLN_SPLIT + " " + BOURASSA_FRONTIERE;
+	private static final String RLN_19 = CEGEP + " " + RLN_SPLIT + LISIEUX_BRULE;
+	private static final String RLN_20 = CEGEP + " " + RLN_SPLIT + " " + ST_FRANCOIS_BOULOGNE + " " + TAXI_BUS;
 	private static final String RLN_21 = PLACE_FLEURIMONT + " " + RLN_SPLIT + " " + CHUS_FLEURIMONT + " " + TAXI_BUS;
 	private static final String RLN_22 = PLACE_FLEURIMONT_GALVIN + " " + RLN_SPLIT + " " + CHUS_FLEURIMONT;
-	private static final String RLN_24 = U_DE_S + " " + RLN_SPLIT + " " + LOTBINIÈRE_NORTH_HATLEY;
-	private static final String RLN_25 = _13_AVE_24_JUIN + " " + RLN_SPLIT + " " + GITE_DU_BEL_ÂGE_CHAMPÊTRE_COQUELICOTS + " " + TAXI_BUS;
+	private static final String RLN_24 = U_DE_S + " " + RLN_SPLIT + " " + LOTBINIERE_NORTH_HATLEY;
+	private static final String RLN_25 = _13_AVE_24_JUIN + " " + RLN_SPLIT + " " + GITE_DU_BEL_AGE_CHAMPETRE_COQUELICOTS + " " + TAXI_BUS;
 	private static final String RLN_26 = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + PARC_INDUSTRIEL + " " + TAXI_BUS;
 	private static final String RLN_27 = U_DE_S + " " + RLN_SPLIT + " " + VAL_DU_LAC;
 	private static final String RLN_28 = U_BISHOP_S + " " + RLN_SPLIT + " " + ALEXANDER_GALT_BEATTLE_ATTO;
 	private static final String RLN_29 = "Dépôt " + RLN_SPLIT + " " + U_DE_S;
-	private static final String RLN_49 = NORTHROP_FRYE + " " + RLN_SPLIT + " " + CHUS_HÔTEL_DIEU;
-	private static final String RLN_50 = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + VAL_DES_ARBRES_LALIBERTÉ;
+	private static final String RLN_49 = NORTHROP_FRYE + " " + RLN_SPLIT + " " + CHUS_HOTEL_DIEU;
+	private static final String RLN_50 = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + VAL_DES_ARBRES_LALIBERTE;
 	private static final String RLN_51 = CEGEP + " " + RLN_SPLIT + " " + KRUGER;
 	private static final String RLN_52 = TERRASSES_ROCK_FOREST + " " + RLN_SPLIT + " " + AVE_DU_PARC;
 	private static final String RLN_53 = U_DE_S + " " + RLN_SPLIT + " " + CAMPUS + " De La Santé";
@@ -264,9 +269,10 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String RLN_56 = U_BISHOP_S + " " + RLN_SPLIT + " " + OXFORD + _SLASH_ + PROVIGO_LENNOXVILLE + " " + TAXI_BUS;
 	private static final String RLN_57 = CARREFOUR_DE_L_ESTRIE + " " + RLN_SPLIT + " " + _13_AVE_24_JUIN;
 
+	@NotNull
 	@Override
-	public String getRouteLongName(GRoute gRoute) {
-		String routeLongName = gRoute.getRouteLongName();
+	public String getRouteLongName(@NotNull GRoute gRoute) {
+		String routeLongName = gRoute.getRouteLongNameOrDefault();
 		if (StringUtils.isEmpty(routeLongName)) {
 			if (GRID_EXPR.equals(gRoute.getRouteShortName())) {
 				routeLongName = IGA_EXTRA_KING_OUEST_NORTHROP_FRYE;
@@ -330,13 +336,16 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	private static final String AGENCY_COLOR = "0A3D53";
 
+	@NotNull
 	@Override
 	public String getAgencyColor() {
 		return AGENCY_COLOR;
 	}
 
+	@SuppressWarnings("DuplicateBranchesInSwitch")
+	@Nullable
 	@Override
-	public String getRouteColor(GRoute gRoute) {
+	public String getRouteColor(@NotNull GRoute gRoute) {
 		if (StringUtils.isEmpty(gRoute.getRouteColor())) {
 			if (GRID_EXPR.equals(gRoute.getRouteShortName())) {
 				return "231F20";
@@ -397,25 +406,28 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
-	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
-		mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), gTrip.getDirectionId());
+	public void setTripHeadsign(@NotNull MRoute mRoute, @NotNull MTrip mTrip, @NotNull GTrip gTrip, @NotNull GSpec gtfs) {
+		mTrip.setHeadsignString(
+				cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()),
+				gTrip.getDirectionIdOrDefault()
+		);
 	}
 
 	@Override
-	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
+	public boolean mergeHeadsign(@NotNull MTrip mTrip, @NotNull MTrip mTripToMerge) {
 		List<String> headsignsValues = Arrays.asList(mTrip.getHeadsignValue(), mTripToMerge.getHeadsignValue());
 		if (mTrip.getRouteId() == 1L) {
 			if (Arrays.asList( //
 					CEGEP, // <>
 					DEPOT, //
 					BOWEN_TALBOT //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(BOWEN_TALBOT, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					CEGEP, // <>
 					CARREFOUR_DE_L_ESTRIE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CARREFOUR_DE_L_ESTRIE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -423,14 +435,14 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					DEPOT, //
 					CEGEP //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CEGEP, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					"College" + _SLASH_ + "Mitchell", //
 					CROISSANT_OXFORD, //
 					U_BISHOP_S //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(U_BISHOP_S, mTrip.getHeadsignId());
 				return true;
 			}
@@ -439,14 +451,14 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					CEGEP, //
 					DEPOT, //
 					_13_AVE_24_JUIN //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(_13_AVE_24_JUIN, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					CEGEP, //
 					DEPOT, //
 					CARREFOUR_DE_L_ESTRIE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CARREFOUR_DE_L_ESTRIE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -454,7 +466,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					"Industriel" + _SLASH_ + "Letellier", //
 					CEGEP //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CEGEP, mTrip.getHeadsignId());
 				return true;
 			}
@@ -462,14 +474,14 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					CEGEP, //
 					CHALUMEAU_GALVIN //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CHALUMEAU_GALVIN, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					CEGEP, //
 					"Galt E" + _SLASH_ + "Conseil", //
 					CARREFOUR_DE_L_ESTRIE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CARREFOUR_DE_L_ESTRIE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -477,13 +489,13 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					"King E" + _SLASH_ + "Raby", //
 					_13_AVE_24_JUIN //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(_13_AVE_24_JUIN, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					DEPOT, //
 					CARREFOUR_DE_L_ESTRIE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CARREFOUR_DE_L_ESTRIE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -491,13 +503,13 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					"Galt O" + _SLASH_ + LISIEUX, //
 					U_DE_S //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(U_DE_S, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
-					LISIEUX_BRÛLÉ, //
+					LISIEUX_BRULE, //
 					LISIEUX_LACHINE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(LISIEUX_LACHINE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -507,7 +519,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					"King" + _SLASH_ + "Wellington", //
 					DEPOT, //
 					CHUS_URGENCE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CHUS_URGENCE, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
@@ -515,7 +527,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					_13_AVE_24_JUIN, //
 					"Belvédère" + _SLASH_ + "Hallée", //
 					HABITAT_ANDRE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(HABITAT_ANDRE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -523,7 +535,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					DEPOT, //
 					CARREFOUR_DE_L_ESTRIE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CARREFOUR_DE_L_ESTRIE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -533,14 +545,14 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					"King" + _SLASH_ + "Wellington", //
 					DEPOT, // <>
 					CHUS_URGENCE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CHUS_URGENCE, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					DEPOT, // <>
 					_13_AVE_24_JUIN, //
 					U_DE_S //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(U_DE_S, mTrip.getHeadsignId());
 				return true;
 			}
@@ -550,14 +562,14 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					PLACE_FLEURIMONT, //
 					"King E" + _SLASH_ + "Raby", //
 					CHARDONNERETS_MARIKA //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CHARDONNERETS_MARIKA, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					CEGEP, //
 					"Allard" + _SLASH_ + "Normand", //
 					U_DE_S //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(U_DE_S, mTrip.getHeadsignId());
 				return true;
 			}
@@ -566,7 +578,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					CARREFOUR_DE_L_ESTRIE, // SAME
 					HABITAT_ANDRE, // SAME
 					U_DE_S // SAME
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(U_DE_S, mTrip.getHeadsignId()); // SAME
 				return true;
 			}
@@ -577,7 +589,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					"Bl Université (Triolet)", //
 					"McGregor" + _SLASH_ + "Sauvignon", //
 					PLATEAU_ST_JOSEPH //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(PLATEAU_ST_JOSEPH, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
@@ -585,7 +597,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					HABITAT_ANDRE, // SAME
 					U_DE_S, // SAME
 					U_BISHOP_S //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(U_BISHOP_S, mTrip.getHeadsignId());
 				return true;
 			}
@@ -593,7 +605,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					DEPOT, //
 					CEGEP //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CEGEP, mTrip.getHeadsignId());
 				return true;
 			}
@@ -601,13 +613,13 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					DEPOT, //
 					CEGEP //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CEGEP, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 16L) {
 			if (Arrays.asList( //
-					FRONTENAC_BELVÉDÈRE, //
+					FRONTENAC_BELVEDERE, //
 					PROSPECT + _SLASH_ + "Duvernay", //
 					PROSPECT + _SLASH_ + "Ontario" //
 			).containsAll(headsignsValues)) {
@@ -618,13 +630,13 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					CARREFOUR_DE_L_ESTRIE, //
 					CEGEP //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CEGEP, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					"King O" + _SLASH_ + "Sauvé", //
 					PLACE_DUSSAULT //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(PLACE_DUSSAULT, mTrip.getHeadsignId());
 				return true;
 			}
@@ -632,7 +644,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					CARREFOUR_DE_L_ESTRIE, //
 					CEGEP //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CEGEP, mTrip.getHeadsignId());
 				return true;
 			}
@@ -640,22 +652,22 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					"Galt O" + _SLASH_ + LISIEUX, //
 					CEGEP //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CEGEP, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					"Galt O" + _SLASH_ + LISIEUX, //
 					LISIEUX_LACHINE, //
-					LISIEUX_BRÛLÉ //
-					).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString(LISIEUX_BRÛLÉ, mTrip.getHeadsignId());
+					LISIEUX_BRULE //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(LISIEUX_BRULE, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 21L) {
 			if (Arrays.asList( //
 					"Goddard" + _SLASH_ + "Duplessis", //
 					CHUS_URGENCE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CHUS_URGENCE, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
@@ -669,19 +681,19 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					"King E" + _SLASH_ + "Raby", //
 					PLACE_FLEURIMONT //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(PLACE_FLEURIMONT, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					PLACE_FLEURIMONT, //
 					CHUS_URGENCE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CHUS_URGENCE, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 24L) {
 			if (Arrays.asList( //
-					ST_ROCH_É_FONTAINE, //
+					ST_ROCH_E_FONTAINE, //
 					"Lotbinière" + _SLASH_ + "North-Hatley" //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("Lotbinière" + _SLASH_ + "North-Hatley", mTrip.getHeadsignId());
@@ -698,9 +710,9 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 27L) {
 			if (Arrays.asList( //
-					ST_ROCH_É_FONTAINE, //
+					ST_ROCH_E_FONTAINE, //
 					U_DE_S //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(U_DE_S, mTrip.getHeadsignId());
 				return true;
 			}
@@ -710,7 +722,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					"Beattie" + _SLASH_ + "Willowdale", //
 					"St.Francis" + _SLASH_ + "Atto", //
 					ALEXANDER_GALT //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(ALEXANDER_GALT, mTrip.getHeadsignId());
 				return true;
 			}
@@ -718,7 +730,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					"CHUS H-D (Bowen)", //
 					NORTHROP_FRYE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(NORTHROP_FRYE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -726,13 +738,13 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					"Laliberté", //
 					VAL_DES_ARBRES //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(VAL_DES_ARBRES, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 52L) {
 			if (Arrays.asList( //
-					ST_ROCH_É_FONTAINE, //
+					ST_ROCH_E_FONTAINE, //
 					"Plaza De L'Ouest" //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("Plaza De L'Ouest", mTrip.getHeadsignId());
@@ -742,7 +754,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					"CHUSFL (Porte 27A)", //
 					CHUS_URGENCE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CHUS_URGENCE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -751,13 +763,13 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					DEPOT, //
 					CEGEP, // <>
 					_13_AVE_24_JUIN //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(_13_AVE_24_JUIN, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					CEGEP, // <>
 					MANOIR //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(MANOIR, mTrip.getHeadsignId());
 				return true;
 			}
@@ -766,14 +778,14 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					DEPOT, // <>
 					"King" + _SLASH_ + "Wellington", // <>
 					_13_AVE_24_JUIN //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(_13_AVE_24_JUIN, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					DEPOT, // <>
 					"King" + _SLASH_ + "Wellington", // <>
 					CARREFOUR_DE_L_ESTRIE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CARREFOUR_DE_L_ESTRIE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -784,7 +796,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					CEGEP, // SAME
 					DEPOT, // SAME
 					LISIEUX_LACHINE // SAME
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(LISIEUX_LACHINE, mTrip.getHeadsignId()); // SAME
 				return true;
 			}
@@ -800,7 +812,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					"McGregor" + _SLASH_ + "Sauvignon", //
 					CHUS_URGENCE, //
 					NORTHROP_FRYE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(NORTHROP_FRYE, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
@@ -811,7 +823,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					LISIEUX_LACHINE, // SAME
 					PROSPECT + _SLASH_ + "Ontario", //
 					IGA_EXTRA //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(IGA_EXTRA, mTrip.getHeadsignId());
 				return true;
 			}
@@ -831,16 +843,17 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern UNIVERSITE_BISHOP = Pattern.compile("(université bishop's|université bishop|univerité bishop)", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final String UNIVERSITE_BISHOP_REPLACEMENT = U_BISHOP_S;
 
-	private static final Pattern DASH_ = Pattern.compile("( \\- )", Pattern.CASE_INSENSITIVE);
+	private static final Pattern DASH_ = Pattern.compile("( - )", Pattern.CASE_INSENSITIVE);
 	private static final String DASH_REPLACEMENT = _SLASH_;
 
-	public static final String CLEAN_ET_REPLACEMENT = "$2/$4";
+	private static final String CLEAN_ET_REPLACEMENT = "$2/$4";
 
 	private static final Pattern PLATEAU = Pattern.compile("((^|\\W)(plateau)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String PLATEAU_REPLACEMENT = "$2" + PLATEAU_SHORT + "$4";
 
+	@NotNull
 	@Override
-	public String cleanTripHeadsign(String tripHeadsign) {
+	public String cleanTripHeadsign(@NotNull String tripHeadsign) {
 		tripHeadsign = DASH_.matcher(tripHeadsign).replaceAll(DASH_REPLACEMENT);
 		tripHeadsign = STATION_DU.matcher(tripHeadsign).replaceAll(STATION_DU_REPLACEMENT);
 		tripHeadsign = STATIONNEMENT.matcher(tripHeadsign).replaceAll(STATIONNEMENT_REPLACEMENT);
@@ -866,8 +879,9 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			Pattern.CASE_INSENSITIVE);
 	private static final String STATIONNEMENT_ALTERNATIF_REPLACEMENT = "$3 ($2)";
 
+	@NotNull
 	@Override
-	public String cleanStopName(String gStopName) {
+	public String cleanStopName(@NotNull String gStopName) {
 		gStopName = STATIONNEMENT_ALTERNATIF.matcher(gStopName).replaceAll(STATIONNEMENT_ALTERNATIF_REPLACEMENT);
 		gStopName = STATION_DU.matcher(gStopName).replaceAll(STATION_DU_REPLACEMENT);
 		gStopName = UNIVERSITE_DE_SHERBROOKE.matcher(gStopName).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
@@ -892,35 +906,37 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String K = "K";
 
 	@Override
-	public int getStopId(GStop gStop) {
-		if (StringUtils.isNumeric(gStop.getStopId())) {
-			return Integer.parseInt(gStop.getStopId());
+	public int getStopId(@NotNull GStop gStop) {
+		//noinspection deprecation
+		final String stopId1 = gStop.getStopId();
+		if (StringUtils.isNumeric(stopId1)) {
+			return Integer.parseInt(stopId1);
 		}
-		Matcher matcher = DIGITS.matcher(gStop.getStopId());
+		Matcher matcher = DIGITS.matcher(stopId1);
 		if (matcher.find()) {
 			int digits = Integer.parseInt(matcher.group());
 			int stopId = 0;
-			if (gStop.getStopId().endsWith(A)) {
+			if (stopId1.endsWith(A)) {
 				stopId += 10000;
-			} else if (gStop.getStopId().endsWith(B)) {
+			} else if (stopId1.endsWith(B)) {
 				stopId += 20000;
-			} else if (gStop.getStopId().endsWith(C)) {
+			} else if (stopId1.endsWith(C)) {
 				stopId += 30000;
-			} else if (gStop.getStopId().endsWith(D)) {
+			} else if (stopId1.endsWith(D)) {
 				stopId += 40000;
-			} else if (gStop.getStopId().endsWith(E)) {
+			} else if (stopId1.endsWith(E)) {
 				stopId += 50000;
-			} else if (gStop.getStopId().endsWith(F)) {
+			} else if (stopId1.endsWith(F)) {
 				stopId += 60000;
-			} else if (gStop.getStopId().endsWith(G)) {
+			} else if (stopId1.endsWith(G)) {
 				stopId += 70000;
-			} else if (gStop.getStopId().endsWith(H)) {
+			} else if (stopId1.endsWith(H)) {
 				stopId += 80000;
-			} else if (gStop.getStopId().endsWith(I)) {
+			} else if (stopId1.endsWith(I)) {
 				stopId += 90000;
-			} else if (gStop.getStopId().endsWith(J)) {
+			} else if (stopId1.endsWith(J)) {
 				stopId += 100000;
-			} else if (gStop.getStopId().endsWith(K)) {
+			} else if (stopId1.endsWith(K)) {
 				stopId += 110000;
 			} else {
 				throw new MTLog.Fatal("Stop doesn't have an ID (end with) %s!", gStop);
