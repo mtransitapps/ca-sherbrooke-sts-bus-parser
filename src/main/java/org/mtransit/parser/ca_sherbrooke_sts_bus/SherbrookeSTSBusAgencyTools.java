@@ -141,7 +141,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String _SLASH_ = " / ";
 
 	private static final String U_DE_S = "UdeS";
-	private static final String U_BISHOP_S = "U Bishop's";
+	private static final String U_BISHOP_S = "U Bishop'S";
 	private static final String MANOIR = "Manoir";
 	private static final String DU = "Du";
 	private static final String CHAMPETRE = "Champêtre";
@@ -859,18 +859,11 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		tripHeadsign = STATIONNEMENT.matcher(tripHeadsign).replaceAll(STATIONNEMENT_REPLACEMENT);
 		tripHeadsign = UNIVERSITE_DE_SHERBROOKE.matcher(tripHeadsign).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		tripHeadsign = UNIVERSITE_BISHOP.matcher(tripHeadsign).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
-		tripHeadsign = AVENUE.matcher(tripHeadsign).replaceAll(AVENUE_REPLACEMENT);
 		tripHeadsign = CleanUtils.CLEAN_ET.matcher(tripHeadsign).replaceAll(CLEAN_ET_REPLACEMENT);
 		tripHeadsign = PLATEAU.matcher(tripHeadsign).replaceAll(PLATEAU_REPLACEMENT);
 		tripHeadsign = CleanUtils.cleanStreetTypesFRCA(tripHeadsign);
 		return CleanUtils.cleanLabelFR(tripHeadsign);
 	}
-
-	private static final Pattern AVENUE = Pattern.compile("( avenue)", Pattern.CASE_INSENSITIVE);
-	private static final String AVENUE_REPLACEMENT = " " + AVE;
-
-	private static final Pattern QUAI = Pattern.compile("( Quai )", Pattern.CASE_INSENSITIVE);
-	private static final String QUAI_REPLACEMENT = " Q. ";
 
 	private static final Pattern NO = Pattern.compile("(\\(no\\.([\\d]+)\\))", Pattern.CASE_INSENSITIVE);
 	private static final String NO_REPLACEMENT = "#$2";
@@ -886,8 +879,6 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		gStopName = STATION_DU.matcher(gStopName).replaceAll(STATION_DU_REPLACEMENT);
 		gStopName = UNIVERSITE_DE_SHERBROOKE.matcher(gStopName).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		gStopName = UNIVERSITE_BISHOP.matcher(gStopName).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
-		gStopName = AVENUE.matcher(gStopName).replaceAll(AVENUE_REPLACEMENT);
-		gStopName = QUAI.matcher(gStopName).replaceAll(QUAI_REPLACEMENT);
 		gStopName = NO.matcher(gStopName).replaceAll(NO_REPLACEMENT);
 		gStopName = CleanUtils.cleanStreetTypesFRCA(gStopName);
 		return CleanUtils.cleanLabelFR(gStopName);
