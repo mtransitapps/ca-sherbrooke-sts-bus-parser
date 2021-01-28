@@ -20,6 +20,7 @@ import org.mtransit.parser.mt.data.MTrip;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -133,7 +134,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String AVE = "Av";
 	private static final String CARREFOUR = "Carref";
 	private static final String PARC = "Parc";
-	private static final String PLACE = "Place";
+	private static final String PLACE = "Pl";
 	private static final String PLATEAU_SHORT = "Pl";
 	private static final String PARC_INDUSTRIEL = PARC + " Ind";
 	private static final String TERRASSES = "Tsses";
@@ -745,14 +746,14 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		} else if (mTrip.getRouteId() == 52L) {
 			if (Arrays.asList( //
 					ST_ROCH_E_FONTAINE, //
-					"Plaza De L'Ouest" //
+					"Plaza De L'O" //
 			).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString("Plaza De L'Ouest", mTrip.getHeadsignId());
+				mTrip.setHeadsignString("Plaza De L'O", mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 53L) {
 			if (Arrays.asList( //
-					"CHUSFL (Porte 27A)", //
+					"CHUSFL (P:27A)", //
 					CHUS_URGENCE //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(CHUS_URGENCE, mTrip.getHeadsignId());
@@ -861,6 +862,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		tripHeadsign = UNIVERSITE_BISHOP.matcher(tripHeadsign).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
 		tripHeadsign = CleanUtils.CLEAN_ET.matcher(tripHeadsign).replaceAll(CLEAN_ET_REPLACEMENT);
 		tripHeadsign = PLATEAU.matcher(tripHeadsign).replaceAll(PLATEAU_REPLACEMENT);
+		tripHeadsign = CleanUtils.cleanBounds(Locale.FRENCH, tripHeadsign);
 		tripHeadsign = CleanUtils.cleanStreetTypesFRCA(tripHeadsign);
 		return CleanUtils.cleanLabelFR(tripHeadsign);
 	}
@@ -880,6 +882,7 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		gStopName = UNIVERSITE_DE_SHERBROOKE.matcher(gStopName).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		gStopName = UNIVERSITE_BISHOP.matcher(gStopName).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
 		gStopName = NO.matcher(gStopName).replaceAll(NO_REPLACEMENT);
+		gStopName = CleanUtils.cleanBounds(Locale.FRENCH, gStopName);
 		gStopName = CleanUtils.cleanStreetTypesFRCA(gStopName);
 		return CleanUtils.cleanLabelFR(gStopName);
 	}
