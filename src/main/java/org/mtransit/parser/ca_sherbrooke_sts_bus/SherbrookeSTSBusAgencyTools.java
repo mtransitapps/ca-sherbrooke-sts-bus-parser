@@ -2,10 +2,10 @@ package org.mtransit.parser.ca_sherbrooke_sts_bus;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mtransit.parser.CleanUtils;
+import org.mtransit.commons.CleanUtils;
+import org.mtransit.commons.StringUtils;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.MTLog;
-import org.mtransit.parser.StringUtils;
 import org.mtransit.parser.Utils;
 import org.mtransit.parser.gtfs.data.GCalendar;
 import org.mtransit.parser.gtfs.data.GCalendarDate;
@@ -17,11 +17,14 @@ import org.mtransit.parser.mt.data.MAgency;
 import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.mt.data.MTrip;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.mtransit.commons.Constants.SPACE_;
 import static org.mtransit.parser.StringUtils.EMPTY;
 
 // https://www.donneesquebec.ca/recherche/fr/dataset/transport-sts
@@ -313,7 +316,6 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			throw new MTLog.Fatal("Unexpected route long name for %s!", gRoute);
 		}
 		routeLongName = CleanUtils.SAINT.matcher(routeLongName).replaceAll(CleanUtils.SAINT_REPLACEMENT);
-		routeLongName = STATION_DU.matcher(routeLongName).replaceAll(STATION_DU_REPLACEMENT);
 		routeLongName = UNIVERSITE_DE_SHERBROOKE.matcher(routeLongName).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		routeLongName = UNIVERSITE_BISHOP.matcher(routeLongName).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
 		routeLongName = CleanUtils.cleanStreetTypesFRCA(routeLongName);
@@ -405,15 +407,37 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
-	public boolean mergeHeadsign(@NotNull MTrip mTrip, @NotNull MTrip mTripToMerge) {
-		throw new MTLog.Fatal("Unexpected trips to merge %s & %s!", mTrip, mTripToMerge);
+	public boolean directionFinderEnabled(long routeId, @NotNull GRoute gRoute) {
+		if (routeId == RID_EXPR) {
+			return false; // Express route is a mess
+		}
+		return super.directionFinderEnabled(routeId, gRoute);
 	}
 
-	private static final Pattern STATION_DU = Pattern.compile("(station du )", Pattern.CASE_INSENSITIVE);
-	private static final String STATION_DU_REPLACEMENT = StringUtils.EMPTY;
-
-	private static final Pattern STATIONNEMENT = Pattern.compile("(^stat\\. |^stationnement )", Pattern.CASE_INSENSITIVE);
-	private static final String STATIONNEMENT_REPLACEMENT = StringUtils.EMPTY;
+	@Override
+	public boolean mergeHeadsign(@NotNull MTrip mTrip, @NotNull MTrip mTripToMerge) {
+		List<String> headsignsValues = Arrays.asList(mTrip.getHeadsignValue(), mTripToMerge.getHeadsignValue());
+		if (mTrip.getRouteId() == RID_EXPR) {
+			if (Arrays.asList( //
+					"Prospect / Ontario",
+					"Carref De L'Estrie",
+					"Stat IGA Extra"
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Stat IGA Extra", mTrip.getHeadsignId());
+				return true;
+			}
+			if (Arrays.asList( //
+					"Pl St-Joseph",
+					"Frontenac / Belvédère",
+					"13e Av / 24-Juin",
+					"Stat Northrop-Frye"
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Stat Northrop-Frye", mTrip.getHeadsignId());
+				return true;
+			}
+		}
+		throw new MTLog.Fatal("Unexpected trips to merge %s & %s!", mTrip, mTripToMerge);
+	}
 
 	private static final Pattern UNIVERSITE_DE_SHERBROOKE = Pattern.compile("(université de sherbrooke)", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final String UNIVERSITE_DE_SHERBROOKE_REPLACEMENT = U_DE_S;
@@ -422,9 +446,6 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String UNIVERSITE_BISHOP_REPLACEMENT = U_BISHOP_S;
 
 	private static final Pattern DASH_ = Pattern.compile("( - )", Pattern.CASE_INSENSITIVE);
-	private static final String DASH_REPLACEMENT = _SLASH_;
-
-	private static final String CLEAN_ET_REPLACEMENT = "$2/$4";
 
 	private static final Pattern PLATEAU = Pattern.compile("((^|\\W)(plateau)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String PLATEAU_REPLACEMENT = "$2" + PLATEAU_SHORT + "$4";
@@ -434,12 +455,9 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	@NotNull
 	@Override
 	public String cleanTripHeadsign(@NotNull String tripHeadsign) {
-		tripHeadsign = DASH_.matcher(tripHeadsign).replaceAll(DASH_REPLACEMENT);
-		tripHeadsign = STATION_DU.matcher(tripHeadsign).replaceAll(STATION_DU_REPLACEMENT);
-		tripHeadsign = STATIONNEMENT.matcher(tripHeadsign).replaceAll(STATIONNEMENT_REPLACEMENT);
 		tripHeadsign = UNIVERSITE_DE_SHERBROOKE.matcher(tripHeadsign).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		tripHeadsign = UNIVERSITE_BISHOP.matcher(tripHeadsign).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
-		tripHeadsign = CleanUtils.CLEAN_ET.matcher(tripHeadsign).replaceAll(CLEAN_ET_REPLACEMENT);
+		tripHeadsign = CleanUtils.CLEAN_ET.matcher(tripHeadsign).replaceAll(CleanUtils.CLEAN_ET_REPLACEMENT);
 		tripHeadsign = PLATEAU.matcher(tripHeadsign).replaceAll(PLATEAU_REPLACEMENT);
 		tripHeadsign = ENDS_WITH_URGENCE_.matcher(tripHeadsign).replaceAll(EMPTY);
 		tripHeadsign = CleanUtils.cleanBounds(Locale.FRENCH, tripHeadsign);
@@ -450,15 +468,10 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern NO = Pattern.compile("(\\(no\\.([\\d]+)\\))", Pattern.CASE_INSENSITIVE);
 	private static final String NO_REPLACEMENT = "#$2";
 
-	private static final Pattern STATIONNEMENT_ALTERNATIF = Pattern.compile("((stat\\. alternatif|stationnement alternatif)[\\s]*(.*))",
-			Pattern.CASE_INSENSITIVE);
-	private static final String STATIONNEMENT_ALTERNATIF_REPLACEMENT = "$3 ($2)";
-
 	@NotNull
 	@Override
 	public String cleanStopName(@NotNull String gStopName) {
-		gStopName = STATIONNEMENT_ALTERNATIF.matcher(gStopName).replaceAll(STATIONNEMENT_ALTERNATIF_REPLACEMENT);
-		gStopName = STATION_DU.matcher(gStopName).replaceAll(STATION_DU_REPLACEMENT);
+		gStopName = DASH_.matcher(gStopName).replaceAll(SPACE_);
 		gStopName = UNIVERSITE_DE_SHERBROOKE.matcher(gStopName).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		gStopName = UNIVERSITE_BISHOP.matcher(gStopName).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
 		gStopName = NO.matcher(gStopName).replaceAll(NO_REPLACEMENT);
