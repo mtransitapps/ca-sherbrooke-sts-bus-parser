@@ -28,8 +28,8 @@ import static org.mtransit.commons.Constants.SPACE_;
 import static org.mtransit.parser.StringUtils.EMPTY;
 
 // https://www.donneesquebec.ca/recherche/fr/dataset/transport-sts
-// CURRENT: https://www.donneesquebec.ca/recherche/fr/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/b7f43b2a-2557-4e3b-ba12-5a5c6d4de5b1/download/gtfsstsherbrooke.zip
-// NEXT:    https://www.donneesquebec.ca/recherche/fr/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/9765c406-0feb-40df-8807-e3991a42f1df/download/gtfs_donneesouverters_stsh_hiver2021_20201215.zip
+// CURRENT: https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/b7f43b2a-2557-4e3b-ba12-5a5c6d4de5b1/download/gtfsstsherbrooke.zip
+// NEXT:    https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/2c4e5945-63fc-40fc-9b70-420277f7ef1e/download/gtfs_donneesouvertes_stsh_printemps2021_20210419.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(@Nullable String[] args) {
