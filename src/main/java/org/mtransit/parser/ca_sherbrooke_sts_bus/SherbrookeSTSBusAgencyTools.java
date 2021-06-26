@@ -6,19 +6,12 @@ import org.mtransit.commons.CleanUtils;
 import org.mtransit.commons.StringUtils;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.MTLog;
-import org.mtransit.parser.Utils;
-import org.mtransit.parser.gtfs.data.GCalendar;
-import org.mtransit.parser.gtfs.data.GCalendarDate;
 import org.mtransit.parser.gtfs.data.GRoute;
-import org.mtransit.parser.gtfs.data.GSpec;
 import org.mtransit.parser.gtfs.data.GStop;
-import org.mtransit.parser.gtfs.data.GTrip;
 import org.mtransit.parser.mt.data.MAgency;
-import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.mt.data.MTrip;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -71,9 +64,9 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		if (GRID_EXPR.equals(gRoute.getRouteShortName())) {
 			return RID_EXPR;
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
+		final Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
 		if (matcher.find()) {
-			long digits = Long.parseLong(matcher.group());
+			final long digits = Long.parseLong(matcher.group());
 			if (gRoute.getRouteShortName().endsWith(S)) {
 				return digits + RID_ENDS_WITH_S;
 			} else if (gRoute.getRouteShortName().endsWith(X)) {
@@ -278,6 +271,12 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 		if (StringUtils.isEmpty(routeLongName)) {
 			throw new MTLog.Fatal("Unexpected route long name for %s!", gRoute);
 		}
+		return cleanRouteLongName(routeLongName);
+	}
+
+	@NotNull
+	@Override
+	public String cleanRouteLongName(@NotNull String routeLongName) {
 		routeLongName = CleanUtils.SAINT.matcher(routeLongName).replaceAll(CleanUtils.SAINT_REPLACEMENT);
 		routeLongName = UNIVERSITE_DE_SHERBROOKE.matcher(routeLongName).replaceAll(UNIVERSITE_DE_SHERBROOKE_REPLACEMENT);
 		routeLongName = UNIVERSITE_BISHOP.matcher(routeLongName).replaceAll(UNIVERSITE_BISHOP_REPLACEMENT);
@@ -302,9 +301,9 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 				return "231F20";
 			}
 			try {
-				Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
+				final Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
 				if (matcher.find()) {
-					int digits = Integer.parseInt(matcher.group());
+					final int digits = Integer.parseInt(matcher.group());
 					switch (digits) {
 					// @formatter:off
 					case 1: return "B3D234";
@@ -357,14 +356,6 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
-	public void setTripHeadsign(@NotNull MRoute mRoute, @NotNull MTrip mTrip, @NotNull GTrip gTrip, @NotNull GSpec gtfs) {
-		mTrip.setHeadsignString(
-				cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()),
-				gTrip.getDirectionIdOrDefault()
-		);
-	}
-
-	@Override
 	public boolean directionFinderEnabled() {
 		return true;
 	}
@@ -379,12 +370,12 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean mergeHeadsign(@NotNull MTrip mTrip, @NotNull MTrip mTripToMerge) {
-		List<String> headsignsValues = Arrays.asList(mTrip.getHeadsignValue(), mTripToMerge.getHeadsignValue());
+		final List<String> headsignsValues = Arrays.asList(mTrip.getHeadsignValue(), mTripToMerge.getHeadsignValue());
 		if (mTrip.getRouteId() == RID_EXPR) {
 			if (Arrays.asList( //
 					"Prospect / Ontario",
 					"Carref De L'Estrie",
-					"Stat IGA Extra"
+					"Stat IGA Extra" // STS web-site direction
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("Stat IGA Extra", mTrip.getHeadsignId());
 				return true;
@@ -393,7 +384,8 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 					"Pl St-Joseph",
 					"Frontenac / Belvédère",
 					"13e Av / 24-Juin",
-					"Stat Northrop-Frye"
+					"McGregor / Sauvignon",
+					"Stat Northrop-Frye" // STS web-site direction
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("Stat Northrop-Frye", mTrip.getHeadsignId());
 				return true;
