@@ -22,7 +22,7 @@ import static org.mtransit.parser.StringUtils.EMPTY;
 
 // https://www.donneesquebec.ca/recherche/fr/dataset/transport-sts
 // CURRENT: https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/b7f43b2a-2557-4e3b-ba12-5a5c6d4de5b1/download/gtfsstsherbrooke.zip
-// NEXT:    https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/f1e525ec-2d03-4421-84d9-0b2499a554ad/download/gtfs_donneesouvertes_stsh_ete2021_20210601.zip
+// NEXT:    https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/b5f6a8b9-8535-4aad-b422-420706f12661/download/gtfs_donneesouvertes_stsh_aut2021_202100803.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(@NotNull String[] args) {
