@@ -20,8 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // https://www.donneesquebec.ca/recherche/fr/dataset/transport-sts
-// CURRENT: https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/b7f43b2a-2557-4e3b-ba12-5a5c6d4de5b1/download/gtfsstsherbrooke.zip
-// NEXT:    https://www.donneesquebec.ca/recherche/dataset/e82b9141-09d8-4f85-af37-d84937bc2503/resource/92c723f4-9eef-4352-a449-deb7022dfcb3/download/gtfs_donnersouvertes_stsh_hiver2022_20211209.zip
 public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(@NotNull String[] args) {
