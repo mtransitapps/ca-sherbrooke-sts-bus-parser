@@ -163,9 +163,14 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 	private static final String K = "K";
 
 	@Override
+	public @NotNull String cleanStopOriginalId(@NotNull String gStopId) {
+		return CleanUtils.cleanMergedID(gStopId);
+	}
+
+	@Override
 	public int getStopId(@NotNull GStop gStop) {
 		//noinspection deprecation
-		final String stopId1 = gStop.getStopId();
+		final String stopId1 = cleanStopOriginalId(gStop.getStopId());
 		if (StringUtils.isNumeric(stopId1)) {
 			return Integer.parseInt(stopId1);
 		}
@@ -196,10 +201,10 @@ public class SherbrookeSTSBusAgencyTools extends DefaultAgencyTools {
 			} else if (stopId1.endsWith(K)) {
 				stopId += 110000;
 			} else {
-				throw new MTLog.Fatal("Stop doesn't have an ID (end with) %s!", gStop);
+				throw new MTLog.Fatal("Stop doesn't have an ID (end with) %s!", gStop.toStringPlus(true));
 			}
 			return stopId + digits;
 		}
-		throw new MTLog.Fatal("Unexpected stop ID for %s!", gStop);
+		throw new MTLog.Fatal("Unexpected stop ID for %s!", gStop.toStringPlus(true));
 	}
 }
